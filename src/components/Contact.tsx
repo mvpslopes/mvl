@@ -22,7 +22,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contato" className="py-20 px-6 bg-gray-50">
+    <section id="contato" className="py-20 px-6 bg-gray-50 animate-fade-up">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">

@@ -1,26 +1,27 @@
-import { ExternalLink } from 'lucide-react';
-
 export default function Projects() {
   const projects = [
     {
-      title: 'Sistema de Gestão Escolar',
-      description: 'Plataforma completa para gerenciamento de cursos, alunos, notas e conteúdos educacionais.',
-      tags: ['Educação', 'Sistema Web', 'Dashboard']
+      title: 'Landing Pages',
+      description:
+        'Páginas focadas em conversão para campanhas, lançamentos, captura de leads e apresentação de serviços de forma objetiva.',
+      tags: ['Conversão', 'Campanhas', 'Leads']
     },
     {
-      title: 'Portal Corporativo',
-      description: 'Sistema integrado para gestão interna de documentos, processos e comunicação empresarial.',
-      tags: ['Empresarial', 'Automação', 'Integração']
+      title: 'Sistemas Web Personalizados',
+      description:
+        'Aplicações web desenvolvidas sob medida para os processos do seu negócio, com foco em performance, segurança e escalabilidade.',
+      tags: ['Sistema Web', 'Dashboard', 'Processos']
     },
     {
-      title: 'Plataforma de Cursos Online',
-      description: 'Ambiente digital para hospedagem e distribuição de cursos com área do aluno e certificados.',
-      tags: ['EAD', 'E-learning', 'Certificação']
+      title: 'Integrações e Automação de Processos',
+      description:
+        'Integração entre sistemas, automação de rotinas manuais e uso de APIs para conectar ferramentas e ganhar eficiência.',
+      tags: ['APIs', 'Automação', 'Integrações']
     }
   ];
 
   return (
-    <section id="projetos" className="py-20 px-6 bg-gray-50">
+    <section id="projetos" className="py-20 px-6 bg-white animate-fade-up">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
@@ -35,7 +36,7 @@ export default function Projects() {
           {projects.map((project, index) => (
             <div
               key={index}
-              className="p-8 bg-white border border-gray-200 rounded-lg hover:border-[#1052E0] transition-all group"
+              className="p-8 card-elevated group"
             >
               <h3 className="text-2xl font-bold text-black mb-3">
                 {project.title}
@@ -53,10 +54,7 @@ export default function Projects() {
                   </span>
                 ))}
               </div>
-              <button className="flex items-center gap-2 text-[#1052E0] font-medium group-hover:gap-3 transition-all">
-                Ver detalhes
-                <ExternalLink size={16} />
-              </button>
+              {/* Espaço reservado para futuros links/detalhes específicos */}
             </div>
           ))}
         </div>

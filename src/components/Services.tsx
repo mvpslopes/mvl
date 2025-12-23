@@ -5,12 +5,14 @@ export default function Services() {
     {
       icon: Code,
       title: 'Sistemas e plataformas digitais',
-      description: 'Desenvolvimento de sistemas personalizados, plataformas web e soluções tecnológicas escaláveis para seu negócio.'
+      description:
+        'Desenvolvimento de sistemas personalizados, sites, landing pages, plataformas web e soluções tecnológicas escaláveis para seu negócio.'
     },
     {
       icon: GraduationCap,
       title: 'Cursos personalizados',
-      description: 'Treinamentos práticos e direcionados em Pacote Office e ferramentas digitais essenciais para profissionais.'
+      description:
+        'Treinamentos práticos e direcionados em Office, Desenvolvimento Web com IA e ferramentas digitais essenciais para profissionais.'
     },
     {
       icon: Wrench,
@@ -25,7 +27,7 @@ export default function Services() {
   ];
 
   return (
-    <section id="servicos" className="py-20 px-6">
+    <section id="servicos" className="py-20 px-6 animate-fade-up">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
@@ -40,7 +42,7 @@ export default function Services() {
           {services.map((service, index) => (
             <div
               key={index}
-              className="p-8 bg-white border border-gray-200 rounded-lg hover:border-[#1052E0] transition-colors"
+              className="p-8 card-elevated"
             >
               <service.icon size={32} className="text-[#1052E0] mb-4" />
               <h3 className="text-2xl font-bold text-black mb-3">
