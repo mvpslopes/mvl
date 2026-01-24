@@ -21,34 +21,34 @@ export default function Projects() {
   ];
 
   return (
-    <section id="projetos" className="py-20 px-6 bg-white animate-fade-up">
+    <section id="projetos" className="py-16 md:py-20 px-4 sm:px-6 bg-background animate-fade-up">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">
             Projetos e soluções
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-muted-foreground">
             Alguns dos sistemas e plataformas desenvolvidos
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {projects.map((project, index) => (
             <div
               key={index}
               className="p-8 card-elevated group"
             >
-              <h3 className="text-2xl font-bold text-black mb-3">
+              <h3 className="text-2xl font-bold text-foreground mb-3">
                 {project.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 {project.description}
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {project.tags.map((tag, tagIndex) => (
                   <span
                     key={tagIndex}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded"
+                    className="px-3 py-1 text-sm bg-muted text-muted-foreground rounded"
                   >
                     {tag}
                   </span>

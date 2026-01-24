@@ -1,10 +1,13 @@
 import { Menu, X } from 'lucide-react';
 import logoMvlBranco from '../../logo/logo_mvl-2_branco.png';
 import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => {
@@ -16,19 +19,28 @@ export default function Header() {
   }, []);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
+    // Se estiver fora da home, volte pra "/" e só então faça o scroll.
+    if (location.pathname !== '/') {
+      navigate('/');
+      window.setTimeout(() => {
+        const element = document.getElementById(id);
+        element?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+      return;
     }
+
+    const element = document.getElementById(id);
+    element?.scrollIntoView({ behavior: 'smooth' });
+    setIsMenuOpen(false);
   };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 bg-black border-b border-gray-800 z-50 transition-shadow ${
+      className={`fixed top-0 left-0 right-0 bg-black/90 backdrop-blur border-b border-white/10 z-50 transition-shadow ${
         hasScrolled ? 'shadow-lg' : ''
       }`}
     >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/70 to-transparent" />
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('inicio')}>
           <img
@@ -39,29 +51,33 @@ export default function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8">
-          <button onClick={() => scrollToSection('inicio')} className="text-sm font-medium text-gray-100 hover:text-[#1052E0] transition-colors">
+          <button onClick={() => scrollToSection('inicio')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">
             Início
           </button>
-          <button onClick={() => scrollToSection('servicos')} className="text-sm font-medium text-gray-100 hover:text-[#1052E0] transition-colors">
+          <button onClick={() => scrollToSection('servicos')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">
             Serviços
           </button>
-          <button onClick={() => scrollToSection('clientes')} className="text-sm font-medium text-gray-100 hover:text-[#1052E0] transition-colors">
+          <button onClick={() => scrollToSection('clientes')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">
             Clientes
           </button>
-          <button onClick={() => scrollToSection('projetos')} className="text-sm font-medium text-gray-100 hover:text-[#1052E0] transition-colors">
+          <button onClick={() => scrollToSection('projetos')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">
             Projetos
           </button>
-          <button onClick={() => scrollToSection('contato')} className="text-sm font-medium text-gray-100 hover:text-[#1052E0] transition-colors">
+          <button onClick={() => scrollToSection('contato')} className="text-sm font-semibold text-white/80 hover:text-white transition-colors">
             Contato
           </button>
-          <button className="px-6 py-2 bg-[#1052E0] text-white text-sm font-medium rounded hover:bg-[#0d42b8] transition-colors">
+          <Link
+            to="/login"
+            className="px-6 py-2 bg-brand text-white text-sm font-semibold rounded-md hover:bg-brand/90 transition-colors shadow-sm shadow-black/30"
+          >
             Acessar
-          </button>
+          </Link>
         </nav>
 
         <button
-          className="md:hidden"
+          className="md:hidden text-white"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -85,9 +101,13 @@ export default function Header() {
             <button onClick={() => scrollToSection('contato')} className="text-sm font-medium text-gray-100 text-left">
               Contato
             </button>
-            <button className="px-6 py-2 bg-[#1052E0] text-white text-sm font-medium rounded hover:bg-[#0d42b8] transition-colors">
+            <Link
+              to="/login"
+              className="px-6 py-2 bg-brand text-white text-sm font-semibold rounded-md hover:bg-brand/90 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Acessar
-            </button>
+            </Link>
           </nav>
         </div>
       )}

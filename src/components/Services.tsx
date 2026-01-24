@@ -12,7 +12,7 @@ export default function Services() {
       icon: GraduationCap,
       title: 'Cursos personalizados',
       description:
-        'Treinamentos práticos e direcionados em Office, Desenvolvimento Web com IA e ferramentas digitais essenciais para profissionais.'
+        'Treinamentos práticos e direcionados em Desenvolvimento Web com IA e ferramentas digitais essenciais para profissionais.'
     },
     {
       icon: Wrench,
@@ -27,28 +27,28 @@ export default function Services() {
   ];
 
   return (
-    <section id="servicos" className="py-20 px-6 animate-fade-up">
+    <section id="servicos" className="py-16 md:py-20 px-4 sm:px-6 bg-muted/40 animate-fade-up">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4">
             O que faço
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-muted-foreground">
             Serviços desenvolvidos para resolver desafios reais com tecnologia
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid gap-6 md:grid-cols-2 md:gap-8">
           {services.map((service, index) => (
             <div
               key={index}
               className="p-8 card-elevated"
             >
-              <service.icon size={32} className="text-[#1052E0] mb-4" />
-              <h3 className="text-2xl font-bold text-black mb-3">
+              <service.icon size={32} className="text-brand mb-4" />
+              <h3 className="text-2xl font-bold text-foreground mb-3">
                 {service.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed">
                 {service.description}
               </p>
             </div>

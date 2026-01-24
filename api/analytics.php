@@ -225,7 +225,7 @@ $days = isset($_GET['days']) ? (int)$_GET['days'] : 7;
 try {
   $config = require __DIR__ . '/config.php';
   $propertyId = $config['ga4']['property_id'] ?? null;
-  $useMockData = $config['api']['use_mock_data'] ?? true;
+  $useMockData = $config['api']['use_mock_data'] ?? false;
   
   if (!$propertyId) {
     throw new Exception('Property ID não configurado em config.php');
@@ -240,32 +240,152 @@ try {
   exit;
 }
 
+// Log para debug
+error_log("API Analytics - use_mock_data: " . ($useMockData ? 'true' : 'false'));
+error_log("API Analytics - Property ID: " . $propertyId);
+
 // Se ainda estiver usando dados mockados, retornar mock
-if ($useMockData) {
+if ($useMockData === true) {
+  // Gerar horários de pico (24 horas)
+  $peakHours = [];
+  for ($i = 0; $i < 24; $i++) {
+    $peakHours[] = [
+      'hour' => str_pad($i, 2, '0', STR_PAD_LEFT) . ':00',
+      'value' => rand(1, 12)
+    ];
+  }
+
+  // Gerar atividade por dia da semana
+  $activityByDay = [
+    ['day' => 'Sunday', 'value' => rand(5, 20)],
+    ['day' => 'Monday', 'value' => rand(10, 25)],
+    ['day' => 'Tuesday', 'value' => rand(8, 22)],
+    ['day' => 'Wednesday', 'value' => rand(9, 23)],
+    ['day' => 'Thursday', 'value' => rand(7, 20)],
+    ['day' => 'Friday', 'value' => rand(12, 28)],
+    ['day' => 'Saturday', 'value' => rand(6, 18)],
+  ];
+
+  // Gerar visitantes ao longo do tempo
+  $visitorsOverTime = [];
+  for ($i = $days; $i >= 0; $i--) {
+    $date = date('d/m/Y', strtotime("-$i days"));
+    $visitorsOverTime[] = [
+      'date' => $date,
+      'value' => rand(5, 25)
+    ];
+  }
+
+  // Gerar dispositivos
+  $totalSessions = rand(150, 1200);
+  $desktopSessions = floor($totalSessions * 0.35);
+  $mobileSessions = $totalSessions - $desktopSessions;
+  $devices = [
+    ['device' => 'desktop', 'sessions' => $desktopSessions, 'percentage' => round(($desktopSessions / $totalSessions) * 100, 1)],
+    ['device' => 'mobile', 'sessions' => $mobileSessions, 'percentage' => round(($mobileSessions / $totalSessions) * 100, 1)],
+  ];
+
+  // Gerar navegadores
+  $browsers = [
+    ['browser' => 'Chrome', 'sessions' => floor($totalSessions * 0.68)],
+    ['browser' => 'Safari', 'sessions' => floor($totalSessions * 0.24)],
+    ['browser' => 'Firefox', 'sessions' => floor($totalSessions * 0.04)],
+    ['browser' => 'Edge', 'sessions' => floor($totalSessions * 0.02)],
+    ['browser' => 'Unknown', 'sessions' => floor($totalSessions * 0.02)],
+  ];
+
+  // Gerar sistemas operacionais
+  $operatingSystems = [
+    ['os' => 'Linux', 'sessions' => floor($totalSessions * 0.54)],
+    ['os' => 'macOS', 'sessions' => floor($totalSessions * 0.30)],
+    ['os' => 'Windows', 'sessions' => floor($totalSessions * 0.12)],
+    ['os' => 'Unknown', 'sessions' => floor($totalSessions * 0.04)],
+  ];
+
+  // Gerar países
+  $countries = [
+    ['country' => 'Brazil', 'sessions' => floor($totalSessions * 0.62), 'views' => floor($totalSessions * 1.5)],
+    ['country' => 'France', 'sessions' => floor($totalSessions * 0.10), 'views' => floor($totalSessions * 0.10)],
+    ['country' => 'United States', 'sessions' => floor($totalSessions * 0.08), 'views' => floor($totalSessions * 0.08)],
+    ['country' => 'Luxembourg', 'sessions' => floor($totalSessions * 0.02), 'views' => floor($totalSessions * 0.02)],
+    ['country' => 'Spain', 'sessions' => floor($totalSessions * 0.02), 'views' => floor($totalSessions * 0.02)],
+    ['country' => 'Poland', 'sessions' => floor($totalSessions * 0.02), 'views' => floor($totalSessions * 0.02)],
+    ['country' => 'Canada', 'sessions' => floor($totalSessions * 0.02), 'views' => floor($totalSessions * 0.02)],
+  ];
+
+  // Gerar cidades
+  $cities = [
+    ['city' => 'Conselheiro Lafaiete(Brazil)', 'sessions' => 6, 'views' => 129],
+    ['city' => 'Paris(France)', 'sessions' => 5, 'views' => 5],
+    ['city' => 'Belo Horizonte(Brazil)', 'sessions' => 3, 'views' => 3],
+    ['city' => 'Petrópolis(Brazil)', 'sessions' => 2, 'views' => 2],
+    ['city' => 'Rio de Janeiro(Brazil)', 'sessions' => 2, 'views' => 2],
+    ['city' => 'Bragança Paulista(Brazil)', 'sessions' => 2, 'views' => 2],
+    ['city' => 'Ouro Branco(Brazil)', 'sessions' => 2, 'views' => 3],
+    ['city' => 'Mountain View(United States)', 'sessions' => 2, 'views' => 2],
+    ['city' => 'Burnaby(Canada)', 'sessions' => 2, 'views' => 2],
+    ['city' => 'Prineville(United States)', 'sessions' => 2, 'views' => 2],
+  ];
+
+  // Gerar páginas de entrada e saída
+  $topPages = [
+    ['page' => '/', 'views' => rand(100, 500), 'avgTime' => '5m 37s'],
+    ['page' => '/servicos', 'views' => rand(50, 300), 'avgTime' => '3m 20s'],
+    ['page' => '/projetos', 'views' => rand(30, 200), 'avgTime' => '4m 15s'],
+    ['page' => '/contato', 'views' => rand(20, 150), 'avgTime' => '2m 10s'],
+  ];
+
+  $entryPages = array_map(function($page) {
+    return ['page' => $page['page'], 'entries' => floor($page['views'] * 1.1)];
+  }, $topPages);
+
+  $exitPages = array_map(function($page) {
+    return ['page' => $page['page'], 'exits' => floor($page['views'] * 0.9)];
+  }, $topPages);
+
+  $totalUsers = rand(100, 1000);
+  $pageViews = rand(200, 2000);
+  $bounceRate = round(rand(30, 70) + (rand(0, 99) / 100), 1);
+  $avgTimeOnPage = rand(2, 8) . 'm ' . rand(10, 59) . 's';
+  $avgSessionDuration = rand(0, 5) . 'm ' . rand(0, 59) . 's';
+  $totalClicks = floor($totalSessions * 0.1);
+  $conversionRate = round(($totalClicks / $totalSessions) * 100, 1);
+  $pagesPerSession = round($pageViews / $totalSessions, 1);
+
   $mockData = [
-    'totalUsers' => rand(100, 1000),
-    'totalSessions' => rand(150, 1200),
-    'pageViews' => rand(200, 2000),
-    'bounceRate' => round(rand(30, 70) + (rand(0, 99) / 100), 1),
-    'topPages' => [
-      ['page' => '/', 'views' => rand(100, 500)],
-      ['page' => '/servicos', 'views' => rand(50, 300)],
-      ['page' => '/projetos', 'views' => rand(30, 200)],
-      ['page' => '/contato', 'views' => rand(20, 150)],
-    ],
+    'totalUsers' => $totalUsers,
+    'totalSessions' => $totalSessions,
+    'pageViews' => $pageViews,
+    'bounceRate' => $bounceRate,
+    'totalClicks' => $totalClicks,
+    'avgTimeOnPage' => $avgTimeOnPage,
+    'avgSessionDuration' => $avgSessionDuration,
+    'conversionRate' => $conversionRate,
+    'pagesPerSession' => $pagesPerSession,
+    'onlineNow' => rand(1, 5),
+    'topPages' => $topPages,
     'trafficSources' => [
-      ['source' => 'Direto', 'sessions' => rand(50, 400)],
-      ['source' => 'Google', 'sessions' => rand(30, 300)],
       ['source' => 'Redes Sociais', 'sessions' => rand(20, 200)],
       ['source' => 'Outros', 'sessions' => rand(10, 100)],
+      ['source' => 'Buscadores', 'sessions' => rand(5, 50)],
     ],
+    'peakHours' => $peakHours,
+    'activityByDay' => $activityByDay,
+    'visitorsOverTime' => $visitorsOverTime,
+    'devices' => $devices,
+    'browsers' => $browsers,
+    'operatingSystems' => $operatingSystems,
+    'entryPages' => $entryPages,
+    'exitPages' => $exitPages,
+    'countries' => $countries,
+    'cities' => $cities,
   ];
 
   echo json_encode([
     'success' => true,
     'data' => $mockData,
     'note' => 'Dados mockados. Configure use_mock_data => false em config.php',
-  ]);
+  ], JSON_UNESCAPED_UNICODE);
   exit;
 }
 
@@ -409,6 +529,393 @@ try {
     ];
   }
 
+  // Inicializar todas as variáveis com arrays vazios
+  $peakHours = [];
+  $activityByDay = [];
+  $visitorsOverTime = [];
+  $devices = [];
+  $browsers = [];
+  $operatingSystems = [];
+  $countries = [];
+  $cities = [];
+  $entryPages = [];
+  $exitPages = [];
+
+  // Buscar horários de pico (hora do dia)
+  // Usar dateHour que combina data e hora
+  $hourDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $hourDimension->setName('dateHour');
+  $hourMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $hourMetric->setName('sessions');
+  
+  $hourRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $hourRequest->setProperty("properties/$propertyId");
+  $hourRequest->setDateRanges([$dateRange]);
+  $hourRequest->setDimensions([$hourDimension]);
+  $hourRequest->setMetrics([$hourMetric]);
+  
+  try {
+    $hourResponse = $client->runReport($hourRequest);
+    $peakHours = [];
+    $hourData = [];
+    if ($hourResponse->getRows()) {
+      foreach ($hourResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $dateHourStr = $dimensionValues[0]->getValue();
+          // Formato: YYYYMMDDHH (ex: 2025012514 para 14:00 do dia 25/01/2025)
+          // Extrair apenas a hora (últimos 2 dígitos antes dos últimos 2)
+          if (strlen($dateHourStr) >= 10) {
+            $hour = (int)substr($dateHourStr, -2);
+            $hourData[$hour] = ($hourData[$hour] ?? 0) + (int)$metricValues[0]->getValue();
+          }
+        }
+      }
+    }
+    // Preencher todas as 24 horas
+    for ($i = 0; $i < 24; $i++) {
+      $peakHours[] = [
+        'hour' => str_pad($i, 2, '0', STR_PAD_LEFT) . ':00',
+        'value' => $hourData[$i] ?? 0
+      ];
+    }
+  } catch (Exception $e) {
+    $peakHours = [];
+    error_log('Erro ao buscar horários de pico: ' . $e->getMessage());
+    error_log('Stack trace: ' . $e->getTraceAsString());
+    // Se falhar, retornar array vazio - o frontend mostrará "Nenhum dado disponível"
+  }
+
+  // Buscar atividade por dia da semana
+  $dayDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $dayDimension->setName('dayOfWeek');
+  $dayMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $dayMetric->setName('sessions');
+  
+  $dayRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $dayRequest->setProperty("properties/$propertyId");
+  $dayRequest->setDateRanges([$dateRange]);
+  $dayRequest->setDimensions([$dayDimension]);
+  $dayRequest->setMetrics([$dayMetric]);
+  
+  try {
+    $dayResponse = $client->runReport($dayRequest);
+    $activityByDay = [];
+    $dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    $dayData = [];
+    if ($dayResponse->getRows()) {
+      foreach ($dayResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $dayIndex = (int)$dimensionValues[0]->getValue();
+          $dayData[$dayIndex] = (int)$metricValues[0]->getValue();
+        }
+      }
+    }
+    foreach ($dayNames as $index => $dayName) {
+      $activityByDay[] = [
+        'day' => $dayName,
+        'value' => $dayData[$index] ?? 0
+      ];
+    }
+  } catch (Exception $e) {
+    $activityByDay = [];
+    error_log('Erro ao buscar atividade por dia: ' . $e->getMessage());
+    error_log('Stack trace: ' . $e->getTraceAsString());
+  }
+
+  // Buscar visitantes ao longo do tempo
+  $dateDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $dateDimension->setName('date');
+  $dateMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $dateMetric->setName('sessions');
+  
+  $dateRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $dateRequest->setProperty("properties/$propertyId");
+  $dateRequest->setDateRanges([$dateRange]);
+  $dateRequest->setDimensions([$dateDimension]);
+  $dateRequest->setMetrics([$dateMetric]);
+  
+  try {
+    $dateResponse = $client->runReport($dateRequest);
+    $visitorsOverTime = [];
+    if ($dateResponse->getRows()) {
+      foreach ($dateResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $dateStr = $dimensionValues[0]->getValue();
+          // Converter formato YYYYMMDD para DD/MM/YYYY
+          if (strlen($dateStr) >= 8) {
+            $year = substr($dateStr, 0, 4);
+            $month = substr($dateStr, 4, 2);
+            $day = substr($dateStr, 6, 2);
+            $visitorsOverTime[] = [
+              'date' => "$day/$month/$year",
+              'value' => (int)$metricValues[0]->getValue()
+            ];
+          }
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $visitorsOverTime = [];
+    error_log('Erro ao buscar visitantes ao longo do tempo: ' . $e->getMessage());
+  }
+
+  // Buscar dispositivos
+  $deviceDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $deviceDimension->setName('deviceCategory');
+  $deviceMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $deviceMetric->setName('sessions');
+  
+  $deviceRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $deviceRequest->setProperty("properties/$propertyId");
+  $deviceRequest->setDateRanges([$dateRange]);
+  $deviceRequest->setDimensions([$deviceDimension]);
+  $deviceRequest->setMetrics([$deviceMetric]);
+  
+  try {
+    $deviceResponse = $client->runReport($deviceRequest);
+    $devices = [];
+    if ($deviceResponse->getRows()) {
+      foreach ($deviceResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $device = strtolower($dimensionValues[0]->getValue());
+          $sessions = (int)$metricValues[0]->getValue();
+          $devices[] = [
+            'device' => $device,
+            'sessions' => $sessions,
+            'percentage' => $totalSessions > 0 ? round(($sessions / $totalSessions) * 100, 1) : 0
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $devices = [];
+    error_log('Erro ao buscar dispositivos: ' . $e->getMessage());
+  }
+
+  // Buscar navegadores
+  $browserDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $browserDimension->setName('browser');
+  $browserMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $browserMetric->setName('sessions');
+  
+  $browserRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $browserRequest->setProperty("properties/$propertyId");
+  $browserRequest->setDateRanges([$dateRange]);
+  $browserRequest->setDimensions([$browserDimension]);
+  $browserRequest->setMetrics([$browserMetric]);
+  $browserRequest->setLimit(10);
+  
+  try {
+    $browserResponse = $client->runReport($browserRequest);
+    $browsers = [];
+    if ($browserResponse->getRows()) {
+      foreach ($browserResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $browsers[] = [
+            'browser' => $dimensionValues[0]->getValue(),
+            'sessions' => (int)$metricValues[0]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $browsers = [];
+    error_log('Erro ao buscar navegadores: ' . $e->getMessage());
+  }
+
+  // Buscar sistemas operacionais
+  $osDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $osDimension->setName('operatingSystem');
+  $osMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $osMetric->setName('sessions');
+  
+  $osRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $osRequest->setProperty("properties/$propertyId");
+  $osRequest->setDateRanges([$dateRange]);
+  $osRequest->setDimensions([$osDimension]);
+  $osRequest->setMetrics([$osMetric]);
+  $osRequest->setLimit(10);
+  
+  try {
+    $osResponse = $client->runReport($osRequest);
+    $operatingSystems = [];
+    if ($osResponse->getRows()) {
+      foreach ($osResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $operatingSystems[] = [
+            'os' => $dimensionValues[0]->getValue(),
+            'sessions' => (int)$metricValues[0]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $operatingSystems = [];
+    error_log('Erro ao buscar sistemas operacionais: ' . $e->getMessage());
+  }
+
+  // Buscar países
+  $countryDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $countryDimension->setName('country');
+  $countryMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $countryMetric->setName('sessions');
+  $countryViewsMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $countryViewsMetric->setName('screenPageViews');
+  
+  $countryRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $countryRequest->setProperty("properties/$propertyId");
+  $countryRequest->setDateRanges([$dateRange]);
+  $countryRequest->setDimensions([$countryDimension]);
+  $countryRequest->setMetrics([$countryMetric, $countryViewsMetric]);
+  $countryRequest->setLimit(20);
+  
+  try {
+    $countryResponse = $client->runReport($countryRequest);
+    $countries = [];
+    if ($countryResponse->getRows()) {
+      foreach ($countryResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) >= 2) {
+          $countries[] = [
+            'country' => $dimensionValues[0]->getValue(),
+            'sessions' => (int)$metricValues[0]->getValue(),
+            'views' => (int)$metricValues[1]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $countries = [];
+    error_log('Erro ao buscar países: ' . $e->getMessage());
+  }
+
+  // Buscar cidades
+  $cityDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $cityDimension->setName('city');
+  $cityCountryDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $cityCountryDimension->setName('country');
+  $cityMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $cityMetric->setName('sessions');
+  $cityViewsMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $cityViewsMetric->setName('screenPageViews');
+  
+  $cityRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $cityRequest->setProperty("properties/$propertyId");
+  $cityRequest->setDateRanges([$dateRange]);
+  $cityRequest->setDimensions([$cityDimension, $cityCountryDimension]);
+  $cityRequest->setMetrics([$cityMetric, $cityViewsMetric]);
+  $cityRequest->setLimit(20);
+  
+  try {
+    $cityResponse = $client->runReport($cityRequest);
+    $cities = [];
+    if ($cityResponse->getRows()) {
+      foreach ($cityResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) >= 2 && count($metricValues) >= 2) {
+          $cityName = $dimensionValues[0]->getValue();
+          $countryName = $dimensionValues[1]->getValue();
+          $cities[] = [
+            'city' => "$cityName($countryName)",
+            'sessions' => (int)$metricValues[0]->getValue(),
+            'views' => (int)$metricValues[1]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $cities = [];
+    error_log('Erro ao buscar cidades: ' . $e->getMessage());
+  }
+
+  // Buscar páginas de entrada
+  $entryDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $entryDimension->setName('landingPage');
+  $entryMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $entryMetric->setName('sessions');
+  
+  $entryRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $entryRequest->setProperty("properties/$propertyId");
+  $entryRequest->setDateRanges([$dateRange]);
+  $entryRequest->setDimensions([$entryDimension]);
+  $entryRequest->setMetrics([$entryMetric]);
+  $entryRequest->setLimit(10);
+  
+  try {
+    $entryResponse = $client->runReport($entryRequest);
+    $entryPages = [];
+    if ($entryResponse->getRows()) {
+      foreach ($entryResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $entryPages[] = [
+            'page' => $dimensionValues[0]->getValue(),
+            'entries' => (int)$metricValues[0]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $entryPages = [];
+    error_log('Erro ao buscar páginas de entrada: ' . $e->getMessage());
+  }
+
+  // Buscar páginas de saída
+  $exitDimension = new \Google\Analytics\Data\V1beta\Dimension();
+  $exitDimension->setName('exitPage');
+  $exitMetric = new \Google\Analytics\Data\V1beta\Metric();
+  $exitMetric->setName('sessions');
+  
+  $exitRequest = new \Google\Analytics\Data\V1beta\RunReportRequest();
+  $exitRequest->setProperty("properties/$propertyId");
+  $exitRequest->setDateRanges([$dateRange]);
+  $exitRequest->setDimensions([$exitDimension]);
+  $exitRequest->setMetrics([$exitMetric]);
+  $exitRequest->setLimit(10);
+  
+  try {
+    $exitResponse = $client->runReport($exitRequest);
+    $exitPages = [];
+    if ($exitResponse->getRows()) {
+      foreach ($exitResponse->getRows() as $row) {
+        $dimensionValues = $row->getDimensionValues();
+        $metricValues = $row->getMetricValues();
+        if (count($dimensionValues) > 0 && count($metricValues) > 0) {
+          $exitPages[] = [
+            'page' => $dimensionValues[0]->getValue(),
+            'exits' => (int)$metricValues[0]->getValue()
+          ];
+        }
+      }
+    }
+  } catch (Exception $e) {
+    $exitPages = [];
+    error_log('Erro ao buscar páginas de saída: ' . $e->getMessage());
+  }
+
+  // Calcular métricas adicionais
+  $avgTimeOnPage = '0s';
+  $avgSessionDuration = '0s';
+  $totalClicks = 0;
+  $conversionRate = 0;
+  $pagesPerSession = $totalSessions > 0 ? round($pageViews / $totalSessions, 1) : 0;
+  $onlineNow = 0;
+
   // Retornar dados formatados
   $responseData = [
     'success' => true,
@@ -417,8 +924,24 @@ try {
       'totalSessions' => $totalSessions,
       'pageViews' => $pageViews,
       'bounceRate' => round($bounceRate * 100, 1), // Converter para porcentagem
+      'totalClicks' => $totalClicks,
+      'avgTimeOnPage' => $avgTimeOnPage,
+      'avgSessionDuration' => $avgSessionDuration,
+      'conversionRate' => $conversionRate,
+      'pagesPerSession' => $pagesPerSession,
+      'onlineNow' => $onlineNow,
       'topPages' => $topPages,
       'trafficSources' => $trafficSources,
+      'peakHours' => $peakHours,
+      'activityByDay' => $activityByDay,
+      'visitorsOverTime' => $visitorsOverTime,
+      'devices' => $devices,
+      'browsers' => $browsers,
+      'operatingSystems' => $operatingSystems,
+      'entryPages' => $entryPages,
+      'exitPages' => $exitPages,
+      'countries' => $countries,
+      'cities' => $cities,
     ],
     'dateRange' => [
       'start' => $startDate,
