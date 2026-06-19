@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    /* Light (site) */
-    --background: 248 250 252; /* #F8FAFC */
-    --foreground: 15 23 42; /* #0F172A */
-    --muted: 241 245 249; /* #F1F5F9 */
-    --muted-foreground: 71 85 105; /* #475569 */
+    /* Light (site + painel interno) */
+    --background: 248 249 251; /* #F8F9FB */
+    --foreground: 26 29 38; /* #1A1D26 */
+    --muted: 243 244 246; /* #F3F4F6 */
+    --muted-foreground: 107 114 128; /* #6B7280 */
     --card: 255 255 255; /* #FFFFFF */
-    --border: 226 232 240; /* #E2E8F0 */
+    --border: 229 231 235; /* #E5E7EB */
 
     /* Brand (logo azul) */
     --brand: 16 82 224; /* #1052E0 */
@@ -77,6 +77,43 @@
 
   .card-elevated {
     @apply rounded-lg border border-border bg-card transition-transform transition-shadow transition-colors duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-brand/50;
+  }
+
+  /* Painel interno MVL (login + dashboard) */
+  .panel-card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.05)] p-4 sm:p-6;
+  }
+
+  .panel-input {
+    @apply w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-brand focus:ring-[3px] focus:ring-brand/20 transition-shadow;
+  }
+
+  .panel-nav-item {
+    @apply w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground;
+  }
+
+  .panel-nav-item-active {
+    @apply bg-[#1A1D26] text-white shadow-sm hover:bg-[#1A1D26] hover:text-white;
+  }
+
+  .panel-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#1A1D26] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#2d3140] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .panel-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-[#1A1D26] transition-colors hover:bg-slate-50 disabled:opacity-50;
+  }
+
+  .panel-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-slate-50 disabled:opacity-50;
+  }
+
+  .panel-badge-success {
+    @apply inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700;
+  }
+
+  .panel-badge-warning {
+    @apply inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700;
   }
 }
 

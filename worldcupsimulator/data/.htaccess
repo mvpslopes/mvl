@@ -1,0 +1,4 @@
+# Impede acesso direto ao JSON pelo navegador
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>

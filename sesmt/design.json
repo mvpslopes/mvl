@@ -1,0 +1,685 @@
+{
+  "$schema": "design-system/v1",
+  "meta": {
+    "name": "SESMT Design System",
+    "version": "1.0.0",
+    "reference": "Dashboard Cucua — Interactive Learning (mockup de alta fidelidade)",
+    "purpose": "Guia de design em alto nível para replicar aparência, tom e comportamento de UI em novas telas e componentes. Destinado a humanos e a assistentes de IA que implementam o aplicativo SESMT.",
+    "locale": "pt-BR",
+    "platform": "web-desktop-first",
+    "density": "comfortable"
+  },
+
+  "creativeDirection": {
+    "oneLiner": "Dashboard profissional com estética soft UI: arredondado, arejado e confiável, usando verde floresta como identidade e azul MVLopes (#1052E0) como acento.",
+    "personality": [
+      "Acolhedor sem ser infantil",
+      "Corporativo sem ser frio",
+      "Claro e escaneável em 3 segundos",
+      "Educativo / operacional — foco em métricas e progresso"
+    ],
+    "do": [
+      "Priorizar legibilidade e hierarquia numérica",
+      "Usar muito espaço em branco entre blocos",
+      "Manter cantos arredondados consistentes em todos os containers",
+      "Usar ícones outline com traço fino e uniforme",
+      "Reservar azul de marca apenas para estado ativo, gráficos e ênfase pontual",
+      "Elevar cards brancos com sombra suave sobre fundo menta-claro"
+    ],
+    "dont": [
+      "Não usar bordas pretas grossas ou sombras duras",
+      "Não misturar mais de uma família tipográfica",
+      "Não saturar a tela com azul — é cor de acento, não fundo dominante",
+      "Não usar cantos retos (border-radius 0) em cards ou botões",
+      "Não empilhar muitos níveis de elevação — máximo 2 planos visuais",
+      "Não usar gradientes chamativos no fundo principal"
+    ]
+  },
+
+  "designPrinciples": {
+    "softness": "Formas arredondadas, sombras difusas e paleta dessaturada transmitem segurança e reduzem fadiga visual.",
+    "clarity": "Números grandes e rótulos curtos nos KPIs; títulos de seção em verde escuro; metadados em tom mais claro.",
+    "consistency": "Mesmo raio, mesmo padding de card, mesmo peso de ícone e mesma lógica de estado ativo em toda a navegação.",
+    "breathingRoom": "Padding generoso (24–32px) no conteúdo principal; gaps de 16–24px entre cards.",
+    "purposefulAccent": "Azul MVLopes guia o olhar para item ativo do menu, linha do gráfico e ponto de dados em foco.",
+    "depthWithoutNoise": "Profundidade via sombra leve + contraste de fundo (menta vs branco), não via múltiplas bordas."
+  },
+
+  "layout": {
+    "archetype": "dashboard-app-shell",
+    "structure": {
+      "description": "Shell fixo: sidebar esquerda + área principal com header sticky implícito, grid de widgets e rodapé discreto.",
+      "regions": [
+        {
+          "id": "sidebar",
+          "position": "left",
+          "width": "240px",
+          "widthCollapsed": "72px",
+          "behavior": "fixa em desktop; colapsável ou drawer em mobile"
+        },
+        {
+          "id": "main",
+          "position": "right",
+          "flex": "1",
+          "minWidth": "0",
+          "padding": "32px"
+        }
+      ]
+    },
+    "grid": {
+      "kpiRow": {
+        "columns": 3,
+        "gap": "24px",
+        "breakpointBelowMd": "1 coluna empilhada"
+      },
+      "contentMaxWidth": "1200px",
+      "chartSection": "largura total da área principal, card único dominante"
+    },
+    "spacingScale": {
+      "unit": 4,
+      "tokens": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "2xl": "48px"
+      },
+      "pagePadding": {
+        "desktop": "32px",
+        "tablet": "24px",
+        "mobile": "16px"
+      },
+      "cardPadding": {
+        "compact": "16px",
+        "default": "24px",
+        "spacious": "32px"
+      },
+      "sectionGap": "32px",
+      "inlineGap": "12px"
+    },
+    "breakpoints": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px"
+    }
+  },
+
+  "colors": {
+    "mode": "light",
+    "palette": {
+      "forest": {
+        "50": "#F4F7F5",
+        "100": "#E8F2EB",
+        "200": "#C5D9CC",
+        "300": "#9BB8A8",
+        "400": "#6B9478",
+        "500": "#3D6B52",
+        "600": "#2D4F3C",
+        "700": "#243F30",
+        "800": "#1C3226",
+        "900": "#14251C",
+        "description": "Verde floresta — identidade primária: textos, ícones inativos, títulos, eixos de gráfico"
+      },
+      "accent": {
+        "50": "#F0F4FD",
+        "100": "#E8EEFB",
+        "200": "#C5D8F5",
+        "300": "#8FB0EB",
+        "400": "#4A82E0",
+        "500": "#1052E0",
+        "600": "#0D42B8",
+        "700": "#0A3594",
+        "description": "Azul MVLopes — acento: nav ativo, gráficos, botões secundários, avatar ring"
+      },
+      "neutral": {
+        "0": "#FFFFFF",
+        "50": "#F8FAF8",
+        "100": "#F1F4F2",
+        "200": "#E2E8E4",
+        "300": "#C8D1CB",
+        "400": "#9AA89F",
+        "500": "#6B7A71",
+        "600": "#4F5C55",
+        "description": "Neutros com leve viés verde no fundo da página"
+      }
+    },
+    "semantic": {
+      "background": {
+        "page": "#F8FAF8",
+        "sidebar": "#FFFFFF",
+        "card": "#FFFFFF",
+        "cardMutedGreen": "#E8F2EB",
+        "cardMutedAccent": "#E8EEFB",
+        "input": "#FFFFFF",
+        "hover": "rgba(45, 79, 60, 0.04)"
+      },
+      "text": {
+        "primary": "#2D4F3C",
+        "secondary": "rgba(45, 79, 60, 0.72)",
+        "muted": "rgba(45, 79, 60, 0.52)",
+        "inverse": "#FFFFFF",
+        "accent": "#1052E0",
+        "onMutedCard": "#2D4F3C"
+      },
+      "border": {
+        "default": "rgba(45, 79, 60, 0.12)",
+        "subtle": "rgba(45, 79, 60, 0.08)",
+        "focus": "#1052E0",
+        "input": "rgba(45, 79, 60, 0.18)"
+      },
+      "icon": {
+        "default": "#2D4F3C",
+        "muted": "rgba(45, 79, 60, 0.55)",
+        "active": "#1052E0",
+        "onMutedGreen": "#2D4F3C",
+        "onMutedAccent": "#2D4F3C"
+      },
+      "chart": {
+        "line": "#1052E0",
+        "lineWidth": 2.5,
+        "point": "#1052E0",
+        "pointHighlight": "#0D42B8",
+        "grid": "rgba(45, 79, 60, 0.08)",
+        "axisLabel": "rgba(45, 79, 60, 0.55)",
+        "crosshair": "rgba(16, 82, 224, 0.5)",
+        "areaFill": "rgba(16, 82, 224, 0.08)"
+      },
+      "state": {
+        "activeNav": "#1052E0",
+        "hoverNav": "rgba(16, 82, 224, 0.08)",
+        "focusRing": "rgba(16, 82, 224, 0.25)",
+        "success": "#3D6B52",
+        "warning": "#D4A017",
+        "error": "#C0392B",
+        "info": "#3D6B52"
+      }
+    }
+  },
+
+  "typography": {
+    "fontFamily": {
+      "primary": "\"Inter\", \"Segoe UI\", system-ui, -apple-system, sans-serif",
+      "mono": "\"JetBrains Mono\", \"Consolas\", monospace"
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    "scale": {
+      "display": {
+        "size": "28px",
+        "lineHeight": "1.2",
+        "weight": 700,
+        "letterSpacing": "-0.02em",
+        "use": "Números principais em KPI cards"
+      },
+      "h1": {
+        "size": "24px",
+        "lineHeight": "1.25",
+        "weight": 700,
+        "use": "Título da página no header (ex: Dashboard)"
+      },
+      "h2": {
+        "size": "18px",
+        "lineHeight": "1.35",
+        "weight": 600,
+        "use": "Título de cards e seções (ex: gráfico)"
+      },
+      "h3": {
+        "size": "16px",
+        "lineHeight": "1.4",
+        "weight": 600,
+        "use": "Subtítulos internos"
+      },
+      "body": {
+        "size": "14px",
+        "lineHeight": "1.5",
+        "weight": 400,
+        "use": "Labels, descrições, itens de menu"
+      },
+      "bodySmall": {
+        "size": "13px",
+        "lineHeight": "1.45",
+        "weight": 400,
+        "use": "Cargo do usuário, legendas de eixo"
+      },
+      "caption": {
+        "size": "12px",
+        "lineHeight": "1.4",
+        "weight": 400,
+        "use": "Rodapé, hints, timestamps"
+      },
+      "kpiValue": {
+        "size": "32px",
+        "lineHeight": "1.1",
+        "weight": 700,
+        "use": "Valor numérico destacado em stat cards"
+      }
+    },
+    "rules": [
+      "Títulos e números em forest-600; nunca preto puro (#000).",
+      "Labels de KPI em body, cor secondary, máximo 2 linhas.",
+      "Nome do usuário no header: semibold 14px; cargo: bodySmall muted."
+    ]
+  },
+
+  "shape": {
+    "borderRadius": {
+      "xs": "6px",
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "20px",
+      "full": "9999px",
+      "card": "16px",
+      "button": "10px",
+      "input": "10px",
+      "avatar": "9999px",
+      "chartCard": "16px"
+    },
+    "borders": {
+      "width": {
+        "hairline": "1px",
+        "default": "1px"
+      },
+      "style": "solid",
+      "preferShadowOverBorder": true
+    }
+  },
+
+  "elevation": {
+    "none": "none",
+    "card": "0 4px 20px rgba(0, 0, 0, 0.05)",
+    "cardHover": "0 8px 28px rgba(0, 0, 0, 0.08)",
+    "dropdown": "0 12px 40px rgba(0, 0, 0, 0.1)",
+    "sidebar": "none",
+    "principle": "Sombras suaves e difusas; evitar sombra em sidebar (plano 0) e em cards pastel (usar cor de fundo como diferenciação)."
+  },
+
+  "iconography": {
+    "style": "outline / linear",
+    "strokeWidth": 1.75,
+    "size": {
+      "nav": "20px",
+      "card": "28px",
+      "header": "20px",
+      "inline": "16px"
+    },
+    "colorRules": {
+      "default": "forest-600",
+      "active": "accent-500",
+      "onMutedBackground": "forest-600 com opacidade 0.85"
+    },
+    "librarySuggestion": "lucide-react ou equivalente outline"
+  },
+
+  "motion": {
+    "duration": {
+      "fast": "150ms",
+      "normal": "200ms",
+      "slow": "300ms"
+    },
+    "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "behaviors": {
+      "cardHover": "translateY(-1px) + shadow cardHover, 200ms",
+      "navHover": "background hoverNav, 150ms",
+      "pageEnter": "fade-in + leve slide-up 8px, 300ms",
+      "chartPoint": "scale 1 → 1.15 no highlight, 150ms"
+    },
+    "reducedMotion": "Respeitar prefers-reduced-motion: desativar translates, manter apenas fade."
+  },
+
+  "components": {
+    "appShell": {
+      "description": "Container raiz com fundo page e layout flex horizontal.",
+      "styles": {
+        "minHeight": "100vh",
+        "background": "semantic.background.page",
+        "fontFamily": "typography.fontFamily.primary",
+        "color": "semantic.text.primary"
+      }
+    },
+
+    "sidebar": {
+      "description": "Navegação vertical fixa; logo no topo; lista de links com ícone + label.",
+      "anatomy": ["logo", "navList", "optionalFooter"],
+      "styles": {
+        "width": "240px",
+        "background": "#FFFFFF",
+        "padding": "24px 16px",
+        "borderRight": "none"
+      },
+      "logo": {
+        "height": "32px",
+        "placement": "top-left com margin-bottom 32px",
+        "treatment": "Wordmark amigável + símbolo; cores da marca (verde + azul no ícone)"
+      },
+      "navItem": {
+        "height": "44px",
+        "padding": "10px 14px",
+        "gap": "12px",
+        "borderRadius": "10px",
+        "fontSize": "14px",
+        "fontWeight": 500,
+        "default": {
+          "color": "semantic.text.primary",
+          "iconColor": "semantic.icon.default",
+          "background": "transparent"
+        },
+        "hover": {
+          "background": "semantic.background.hover"
+        },
+        "active": {
+          "color": "semantic.text.accent",
+          "iconColor": "semantic.icon.active",
+          "background": "transparent",
+          "indicator": "sem barra lateral — cor do texto/ícone basta"
+        }
+      },
+      "navItemsReference": [
+        "Dashboard",
+        "Interactive Materials",
+        "Users",
+        "Groups",
+        "Reports",
+        "Settings"
+      ]
+    },
+
+    "header": {
+      "description": "Barra superior da área principal: título à esquerda; ações e perfil à direita.",
+      "anatomy": ["menuToggle", "pageTitle", "actions", "userMenu"],
+      "styles": {
+        "height": "auto",
+        "paddingBottom": "24px",
+        "marginBottom": "8px",
+        "background": "transparent"
+      },
+      "pageTitle": {
+        "typography": "h1",
+        "prefixIcon": "hamburger/menu opcional à esquerda, 20px, cor forest"
+      },
+      "actions": {
+        "gap": "16px",
+        "alignment": "center right"
+      },
+      "notificationBell": {
+        "iconSize": "20px",
+        "color": "forest-600",
+        "badge": "opcional — círculo azul 8px no canto superior direito do ícone"
+      },
+      "userProfile": {
+        "layout": "horizontal: avatar + text stack + chevron",
+        "avatar": {
+          "size": "40px",
+          "border": "2px solid #1052E0",
+          "shape": "circle"
+        },
+        "name": { "typography": "body", "weight": 600 },
+        "role": { "typography": "bodySmall", "color": "semantic.text.muted" },
+        "chevron": { "size": "16px", "color": "semantic.text.muted" }
+      }
+    },
+
+    "statCard": {
+      "description": "Card de KPI com ícone à esquerda, número grande e label descritivo.",
+      "anatomy": ["iconContainer", "metric", "label"],
+      "layout": "flex row, align center, gap 16px",
+      "sizes": {
+        "minHeight": "100px",
+        "padding": "24px",
+        "borderRadius": "16px"
+      },
+      "variants": {
+        "mint": {
+          "background": "#E8F2EB",
+          "shadow": "none",
+          "iconBackground": "transparent",
+          "iconColor": "#2D4F3C"
+        },
+        "accentTint": {
+          "background": "#E8EEFB",
+          "shadow": "none",
+          "iconColor": "#2D4F3C"
+        },
+        "white": {
+          "background": "#FFFFFF",
+          "shadow": "elevation.card",
+          "iconColor": "#2D4F3C"
+        }
+      },
+      "metric": {
+        "typography": "kpiValue",
+        "color": "#2D4F3C"
+      },
+      "label": {
+        "typography": "body",
+        "color": "semantic.text.secondary",
+        "maxLines": 2
+      },
+      "icon": {
+        "size": "28px",
+        "style": "outline",
+        "optionalContainer": "sem caixa sólida — ícone flutuando à esquerda"
+      },
+      "pattern": "Alternar variantes mint / accentTint / mint na fileira de 3 para ritmo visual sem quebrar consistência."
+    },
+
+    "chartCard": {
+      "description": "Card largo branco com título, filtro de período e gráfico de linha suave.",
+      "anatomy": ["headerRow", "chartCanvas", "optionalLegend"],
+      "styles": {
+        "background": "#FFFFFF",
+        "borderRadius": "16px",
+        "padding": "24px",
+        "shadow": "elevation.card",
+        "minHeight": "360px"
+      },
+      "headerRow": {
+        "layout": "flex space-between align center",
+        "title": { "typography": "h2", "color": "forest-600" },
+        "filter": "component.select compact à direita"
+      },
+      "chart": {
+        "type": "spline / smooth line",
+        "lineColor": "#1052E0",
+        "lineWidth": 2.5,
+        "pointRadius": 4,
+        "pointHoverRadius": 6,
+        "highlight": {
+          "verticalLine": "dashed, azul com opacidade",
+          "activePoint": "círculo azul preenchido maior",
+          "tooltip": "opcional — fundo branco, sombra dropdown, texto forest"
+        },
+        "axes": {
+          "gridColor": "chart.grid",
+          "tickColor": "chart.axisLabel",
+          "yTicks": "incrementos limpos (ex: 0, 5, 10, 15, 20)",
+          "xLabels": "datas curtas; marcadores circulares pequenos na linha de base"
+        }
+      }
+    },
+
+    "select": {
+      "description": "Dropdown de filtro (ex: Last 15 Days).",
+      "styles": {
+        "height": "36px",
+        "padding": "8px 12px",
+        "fontSize": "13px",
+        "borderRadius": "10px",
+        "border": "1px solid semantic.border.input",
+        "background": "#FFFFFF",
+        "color": "forest-600",
+        "chevron": "à direita, 16px"
+      },
+      "focus": {
+        "borderColor": "#1052E0",
+        "boxShadow": "0 0 0 3px semantic.state.focusRing"
+      }
+    },
+
+    "button": {
+      "variants": {
+        "primary": {
+          "background": "#2D4F3C",
+          "color": "#FFFFFF",
+          "hoverBackground": "#243F30",
+          "borderRadius": "10px",
+          "padding": "10px 20px",
+          "fontWeight": 600,
+          "fontSize": "14px"
+        },
+        "accent": {
+          "background": "#1052E0",
+          "color": "#FFFFFF",
+          "hoverBackground": "#0D42B8"
+        },
+        "ghost": {
+          "background": "transparent",
+          "color": "#2D4F3C",
+          "hoverBackground": "semantic.background.hover"
+        },
+        "outline": {
+          "background": "#FFFFFF",
+          "border": "1px solid semantic.border.input",
+          "color": "#2D4F3C"
+        }
+      },
+      "sizes": {
+        "sm": { "height": "32px", "paddingX": "12px", "fontSize": "13px" },
+        "md": { "height": "40px", "paddingX": "16px", "fontSize": "14px" },
+        "lg": { "height": "48px", "paddingX": "20px", "fontSize": "15px" }
+      }
+    },
+
+    "input": {
+      "description": "Campos de formulário alinhados ao mesmo vocabulário visual.",
+      "styles": {
+        "height": "40px",
+        "padding": "10px 14px",
+        "borderRadius": "10px",
+        "border": "1px solid semantic.border.input",
+        "background": "#FFFFFF",
+        "fontSize": "14px",
+        "placeholderColor": "semantic.text.muted"
+      },
+      "label": {
+        "fontSize": "13px",
+        "fontWeight": 500,
+        "color": "forest-600",
+        "marginBottom": "6px"
+      },
+      "focus": {
+        "borderColor": "#1052E0",
+        "outline": "none",
+        "boxShadow": "0 0 0 3px rgba(16, 82, 224, 0.25)"
+      }
+    },
+
+    "table": {
+      "description": "Tabelas de listagem (materiais, usuários, etc.).",
+      "styles": {
+        "containerBackground": "#FFFFFF",
+        "containerRadius": "16px",
+        "containerShadow": "elevation.card",
+        "headerBackground": "#F8FAF8",
+        "headerText": "forest-600 semibold 13px",
+        "rowHover": "rgba(45, 79, 60, 0.04)",
+        "borderColor": "semantic.border.subtle",
+        "cellPadding": "14px 16px"
+      }
+    },
+
+    "badge": {
+      "variants": {
+        "default": { "background": "#E8F2EB", "color": "#2D4F3C" },
+        "accent": { "background": "#E8EEFB", "color": "#1052E0" },
+        "neutral": { "background": "#F1F4F2", "color": "#4F5C55" }
+      },
+      "shape": { "borderRadius": "full", "padding": "4px 10px", "fontSize": "12px", "fontWeight": 500 }
+    },
+
+    "footer": {
+      "description": "Rodapé discreto centralizado.",
+      "styles": {
+        "marginTop": "48px",
+        "padding": "16px",
+        "textAlign": "center",
+        "typography": "caption",
+        "color": "semantic.text.muted"
+      },
+      "contentPattern": "© {year} {company}. All rights reserved."
+    },
+
+    "emptyState": {
+      "iconSize": "48px",
+      "iconColor": "semantic.icon.muted",
+      "titleTypography": "h3",
+      "descriptionTypography": "body",
+      "descriptionColor": "semantic.text.secondary",
+      "action": "button.primary ou button.outline"
+    },
+
+    "toast": {
+      "position": "top-right",
+      "borderRadius": "12px",
+      "shadow": "elevation.dropdown",
+      "successAccent": "forest-500",
+      "errorAccent": "state.error"
+    }
+  },
+
+  "dataVisualization": {
+    "defaultChartType": "line",
+    "curve": "monotone / spline suave — sem ângulos secos",
+    "colorSequence": ["#1052E0", "#3D6B52", "#6B9478", "#4A82E0"],
+    "guidelines": [
+      "Um único dataset em destaque por card — linha azul em fundo branco.",
+      "Grade horizontal leve; evitar grade vertical pesada.",
+      "Destaque de data com linha tracejada vertical + ponto ampliado.",
+      "Filtro de período sempre visível no canto superior direito do card."
+    ]
+  },
+
+  "accessibility": {
+    "contrastMinimum": "WCAG AA para texto body sobre fundos claros",
+    "focusVisible": "Anel azul 3px em todos os controles interativos",
+    "touchTargetMin": "44px",
+    "semanticHtml": "nav, main, header, button, label associados a inputs"
+  },
+
+  "aiImplementationGuide": {
+    "summary": "Ao gerar UI para o SESMT: sidebar branca, fundo #F8FAF8, cards 16px, verde #2D4F3C para texto, azul #1052E0 para ativo e destaques.",
+    "tailwindMapping": {
+      "colors": {
+        "sesmt-page": "#F8FAF8",
+        "sesmt-forest": "#2D4F3C",
+        "sesmt-forest-muted": "#E8F2EB",
+        "sesmt-accent": "#1052E0",
+        "sesmt-accent-muted": "#E8EEFB"
+      },
+      "classesExample": [
+        "min-h-screen bg-[#F8FAF8] text-[#2D4F3C]",
+        "rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] bg-white p-6",
+        "rounded-2xl bg-[#E8F2EB] p-6",
+        "text-[#1052E0] font-medium (nav ativo)"
+      ]
+    },
+    "componentChecklist": [
+      "AppShell com Sidebar + Main",
+      "Header com título h1 e UserProfile",
+      "Grid 3 colunas de StatCard (variantes mint/accentTint alternadas)",
+      "ChartCard com Select de período e LineChart azul",
+      "Footer caption centralizado"
+    ],
+    "fileConventions": {
+      "designTokens": "sesmt/design.json",
+      "suggestedComponentsPath": "sesmt/src/components/",
+      "suggestedStylesPath": "sesmt/src/styles/tokens.css"
+    }
+  }
+}

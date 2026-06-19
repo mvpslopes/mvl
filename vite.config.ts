@@ -76,6 +76,10 @@ export default defineConfig({
           console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json)');
         }
 
+        const htaccess = join(__dirname, 'public', '.htaccess');
+        if (existsSync(htaccess)) {
+          copyFileSync(htaccess, join(__dirname, 'dist', '.htaccess'));
+        }
       },
     },
   ],

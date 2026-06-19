@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-page text-ink font-sans antialiased;
+    font-family: Inter, system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .fin-card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-card p-6;
+  }
+
+  .fin-input {
+    @apply w-full h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:border-violet-400 focus:ring-[3px] focus:ring-violet-100;
+  }
+
+  .fin-label {
+    @apply block text-sm font-medium text-ink mb-1.5;
+  }
+
+  .fin-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors disabled:opacity-50;
+  }
+
+  .fin-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium hover:bg-slate-50 transition-colors;
+  }
+
+  .fin-nav {
+    @apply flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-ink transition-colors;
+  }
+
+  .fin-nav-active {
+    @apply bg-ink text-white hover:bg-ink hover:text-white;
+  }
+
+  .badge-prevista {
+    @apply inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600;
+  }
+
+  .badge-ok {
+    @apply inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700;
+  }
+
+  .badge-cancel {
+    @apply inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600;
+  }
+}

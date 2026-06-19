@@ -23,3 +23,6 @@ dist-ssr
 .env
 api/credentials.json
 api/vendor/
+sesmt/node_modules
+sesmt/dist
+sesmt/api/config.local.php

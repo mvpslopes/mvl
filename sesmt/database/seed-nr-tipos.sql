@@ -1,0 +1,45 @@
+-- Atualiza lista completa de NRs (execute no phpMyAdmin se o seletor tiver só 4 opções)
+-- Ou acesse: /api/migrate-certificados.php
+
+ALTER TABLE nr_tipos MODIFY nome VARCHAR(255) NOT NULL;
+
+INSERT INTO nr_tipos (codigo, nome, ativo) VALUES
+('NR-1', 'NR-1 — Disposições Gerais e Gerenciamento de Riscos Ocupacionais', 1),
+('NR-2', 'NR-2 — Inspeção Prévia (Revogada)', 0),
+('NR-3', 'NR-3 — Embargo ou Interdição', 1),
+('NR-4', 'NR-4 — SESMT', 1),
+('NR-5', 'NR-5 — CIPA', 1),
+('NR-6', 'NR-6 — Equipamento de Proteção Individual (EPI)', 1),
+('NR-7', 'NR-7 — PCMSO', 1),
+('NR-8', 'NR-8 — Edificações', 1),
+('NR-9', 'NR-9 — Avaliação e Controle das Exposições Ocupacionais', 1),
+('NR-10', 'NR-10 — Segurança em Instalações e Serviços em Eletricidade', 1),
+('NR-11', 'NR-11 — Transporte, Movimentação, Armazenagem e Manuseio de Materiais', 1),
+('NR-12', 'NR-12 — Segurança no Trabalho em Máquinas e Equipamentos', 1),
+('NR-13', 'NR-13 — Caldeiras, Vasos de Pressão e Tubulações', 1),
+('NR-14', 'NR-14 — Fornos', 1),
+('NR-15', 'NR-15 — Atividades e Operações Insalubres', 1),
+('NR-16', 'NR-16 — Atividades e Operações Perigosas', 1),
+('NR-17', 'NR-17 — Ergonomia', 1),
+('NR-18', 'NR-18 — Condições e Meio Ambiente na Indústria da Construção', 1),
+('NR-19', 'NR-19 — Explosivos', 1),
+('NR-20', 'NR-20 — Segurança com Inflamáveis e Combustíveis', 1),
+('NR-21', 'NR-21 — Trabalhos a Céu Aberto', 1),
+('NR-22', 'NR-22 — Segurança e Saúde Ocupacional na Mineração', 1),
+('NR-23', 'NR-23 — Proteção Contra Incêndios', 1),
+('NR-24', 'NR-24 — Condições Sanitárias e de Conforto nos Locais de Trabalho', 1),
+('NR-25', 'NR-25 — Resíduos Industriais', 1),
+('NR-26', 'NR-26 — Sinalização de Segurança', 1),
+('NR-27', 'NR-27 — Registro Profissional do Técnico de Segurança (Revogada)', 0),
+('NR-28', 'NR-28 — Fiscalização e Penalidades', 1),
+('NR-29', 'NR-29 — Segurança e Saúde no Trabalho Portuário', 1),
+('NR-30', 'NR-30 — Segurança e Saúde no Trabalho Aquaviário', 1),
+('NR-31', 'NR-31 — Agricultura, Pecuária, Silvicultura e Aquicultura', 1),
+('NR-32', 'NR-32 — Segurança e Saúde em Serviços de Saúde', 1),
+('NR-33', 'NR-33 — Segurança e Saúde em Espaços Confinados', 1),
+('NR-34', 'NR-34 — Construção, Reparação e Desmonte Naval', 1),
+('NR-35', 'NR-35 — Trabalho em Altura', 1),
+('NR-36', 'NR-36 — Abate e Processamento de Carnes e Derivados', 1),
+('NR-37', 'NR-37 — Segurança e Saúde em Plataformas de Petróleo', 1),
+('NR-38', 'NR-38 — Limpeza Urbana e Manejo de Resíduos Sólidos', 1)
+ON DUPLICATE KEY UPDATE nome = VALUES(nome), ativo = VALUES(ativo);

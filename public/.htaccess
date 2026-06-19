@@ -2,9 +2,11 @@
   RewriteEngine On
   RewriteBase /
 
-  # Redirecionar todas as requisições para index.html (exceto arquivos existentes)
+  # Não interceptar o app de finanças (subpasta com SPA própria)
+  RewriteCond %{REQUEST_URI} ^/financas(/|$) [NC]
+  RewriteRule ^ - [L]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(?!api/).*$ index.html [L]
 </IfModule>
-

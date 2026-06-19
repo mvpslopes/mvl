@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogIn, X } from 'lucide-react';
+import { ArrowLeft, LogIn, Shield } from 'lucide-react';
 import logoMvlBranco from '../../logo/logo_mvl-2_branco.png';
 
 export default function Login() {
@@ -23,7 +23,6 @@ export default function Login() {
     setError('');
 
     try {
-      // Tentar diferentes caminhos da API
       const apiPaths = [
         '/api/auth.php',
         'https://mvlopes.com.br/api/auth.php',
@@ -42,18 +41,17 @@ export default function Login() {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
-            credentials: 'include', // Incluir cookies de sessão
+            credentials: 'include',
           });
 
           if (response.ok) {
             data = (await response.json()) as AuthApiResponse;
             break;
           } else {
-            // Tentar ler a resposta mesmo em caso de erro
             try {
               data = (await response.json()) as AuthApiResponse;
             } catch {
-              // Se não conseguir parsear JSON, continuar para próximo caminho
+              /* continua */
             }
           }
         } catch (err) {
@@ -66,46 +64,14 @@ export default function Login() {
         throw lastError || new Error('Não foi possível conectar ao servidor. Verifique sua conexão.');
       }
 
-      console.log('📥 Resposta bruta da API:', {
-        status: response.status,
-        ok: response.ok,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-        data: data,
-        dataString: JSON.stringify(data)
-      });
-
       if (!response.ok || !data.success) {
-        console.error('❌ Erro na resposta da API:', {
-          status: response.status,
-          data: data
-        });
         throw new Error(data.message || 'Credenciais inválidas');
       }
 
-      console.log('📥 Dados recebidos da API:', {
-        success: data.success,
-        hasToken: !!data.token,
-        hasRole: !!data.role,
-        hasName: !!data.name,
-        tokenType: typeof data.token,
-        roleType: typeof data.role,
-        fullData: data
-      });
-
-      // Verificar se os dados necessários estão presentes
       if (!data.token || !data.role) {
-        console.error('❌ Dados incompletos da API:', {
-          token: data.token,
-          role: data.role,
-          name: data.name,
-          email: data.email,
-          fullResponse: data
-        });
-        throw new Error(`Resposta da API incompleta. Token: ${data.token ? 'OK' : 'FALTANDO'}, Role: ${data.role ? 'OK' : 'FALTANDO'}`);
+        throw new Error('Resposta da API incompleta. Tente novamente.');
       }
 
-      // Verificar se localStorage está disponível
       const isLocalStorageAvailable = (() => {
         try {
           const test = '__localStorage_test__';
@@ -117,151 +83,120 @@ export default function Login() {
         }
       })();
 
-      console.log('💾 localStorage disponível?', isLocalStorageAvailable);
+      const storage = isLocalStorageAvailable ? localStorage : sessionStorage;
+      storage.setItem('auth_token', String(data.token));
+      storage.setItem('user_role', String(data.role));
+      storage.setItem('user_name', String(data.name || 'Usuário'));
 
-      // Tentar salvar no localStorage com tratamento de erro
-      try {
-        const storage = isLocalStorageAvailable ? localStorage : sessionStorage;
-        const storageName = isLocalStorageAvailable ? 'localStorage' : 'sessionStorage';
-        
-        console.log(`💾 Usando ${storageName} para salvar dados...`);
-        
-        storage.setItem('auth_token', String(data.token));
-        storage.setItem('user_role', String(data.role));
-        storage.setItem('user_name', String(data.name || 'Usuário'));
-        
-        // Forçar sincronização - ler imediatamente após salvar
-        const savedToken = storage.getItem('auth_token');
-        const savedRole = storage.getItem('user_role');
-        
-        console.log('✅ Dados salvos, verificando...', {
-          tokenSalvo: !!savedToken,
-          roleSalvo: !!savedRole,
-          tokenMatch: savedToken === String(data.token),
-          roleMatch: savedRole === String(data.role)
-        });
-        
-        if (!savedToken || !savedRole) {
-          throw new Error(`Falha ao salvar dados no ${storageName}`);
-        }
-        
-        // Dados já foram verificados acima, então estão salvos
-        console.log(`✅ Dados salvos com sucesso no ${storageName}`);
-        
-        console.log('✅ Login realizado com sucesso:', { 
-          token: data.token ? `Token salvo (${data.token.length} caracteres)` : 'Sem token',
-          role: data.role,
-          name: data.name,
-          storage: storageName,
-          fullData: data
-        });
+      const savedToken = storage.getItem('auth_token');
+      const savedRole = storage.getItem('user_role');
 
-        // Pequeno delay para garantir que o localStorage seja salvo
-        setTimeout(() => {
-          console.log('🔄 Redirecionando para dashboard...');
-          // Forçar recarregamento completo da página para garantir que o App.tsx detecte a mudança
-          window.location.href = '/dashboard';
-        }, 300);
-        
-      } catch (storageError) {
-        console.error('❌ Erro ao salvar no localStorage:', storageError);
-        setError('Erro ao salvar dados de autenticação. Verifique se o navegador permite armazenamento local.');
-        throw storageError;
+      if (!savedToken || !savedRole) {
+        throw new Error('Falha ao salvar dados de autenticação.');
       }
+
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 300);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao fazer login';
       setError(errorMessage);
-      console.error('Erro no login:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    window.location.href = '/';
-  };
-
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-card border border-white/10 rounded-2xl shadow-[0_20px_80px_rgba(0,0,0,0.45)] p-8 relative overflow-hidden">
-          <div
-            className="absolute -top-24 -right-24 h-72 w-72 rounded-full"
-            style={{
-              background:
-                'radial-gradient(circle at center, rgba(16,82,224,0.35) 0%, rgba(16,82,224,0.08) 40%, rgba(16,82,224,0) 70%)',
-            }}
-          />
-          <div className="text-center mb-8">
-            <img
-              src={logoMvlBranco}
-              alt="MVLopes"
-              className="h-10 w-auto mx-auto mb-5 relative"
-            />
-            <h1 className="text-2xl font-extrabold text-foreground">Acesso ao Sistema</h1>
-            <p className="text-muted-foreground mt-2">Entre com suas credenciais para acessar o painel.</p>
+    <div className="min-h-screen bg-[#F8F9FB] flex">
+      <div className="hidden lg:flex lg:w-[42%] xl:w-[38%] bg-[#1A1D26] relative overflow-hidden items-center justify-center p-12">
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            background:
+              'radial-gradient(circle at 20% 30%, rgba(16,82,224,0.45) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(182,146,246,0.35) 0%, transparent 45%)',
+          }}
+        />
+        <div className="relative z-10 max-w-sm text-center">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center mx-auto mb-8 p-3">
+            <img src={logoMvlBranco} alt="MVLopes" className="w-full h-full object-contain" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">Painel MVLopes</h2>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Acompanhe métricas do site, gerencie usuários e configure o sistema em um ambiente seguro.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+        <div className="w-full max-w-md">
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Voltar ao site
+          </a>
+
+          <div className="panel-card p-8 sm:p-10">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-11 h-11 rounded-xl bg-[#1A1D26] flex items-center justify-center shrink-0">
+                <Shield className="w-5 h-5 text-white" strokeWidth={1.75} />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Acesso ao sistema</h1>
+                <p className="text-sm text-muted-foreground">Entre com suas credenciais</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <div className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1.5">
+                  E-mail
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="panel-input"
+                  placeholder="seu@email.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1.5">
+                  Senha
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="panel-input"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button type="submit" disabled={isLoading} className="panel-btn-primary w-full py-3">
+                {isLoading ? 'Entrando…' : 'Entrar'}
+                <LogIn size={18} />
+              </button>
+            </form>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-foreground mb-2">
-                E-mail
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-white/10 rounded-lg bg-black/20 text-foreground placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-0 transition-shadow"
-                placeholder="seu@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-foreground mb-2">
-                Senha
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-white/10 rounded-lg bg-black/20 text-foreground placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-0 transition-shadow"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={handleCancel}
-                disabled={isLoading}
-                className="flex-1 px-4 py-3 border border-white/10 rounded-lg text-foreground/80 hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
-              >
-                <X size={20} />
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1 btn-brand flex items-center justify-center gap-2"
-              >
-                {isLoading ? 'Entrando...' : 'Entrar'}
-                <LogIn size={20} />
-              </button>
-            </div>
-          </form>
+          <p className="text-center text-xs text-muted-foreground mt-6">
+            © {new Date().getFullYear()} MVLopes. Acesso restrito.
+          </p>
         </div>
       </div>
     </div>
   );
 }
-

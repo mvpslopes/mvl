@@ -12,7 +12,7 @@ function App() {
       <Route
         path="/login"
         element={
-          <ThemeScope theme="dark">
+          <ThemeScope theme="light">
             <Login />
           </ThemeScope>
         }
@@ -20,7 +20,7 @@ function App() {
       <Route
         path="/dashboard"
         element={
-          <ThemeScope theme="dark">
+          <ThemeScope theme="light">
             <RequireAuth requiredRole="root">
               <Dashboard />
             </RequireAuth>

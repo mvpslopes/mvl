@@ -434,7 +434,7 @@ try {
   // Log da requisição ao Google Analytics
   error_log("Google Analytics API - Fazendo requisição ao Property ID: $propertyId");
   error_log("Google Analytics API - Período: $startDate até $endDate ($days dias)");
-  
+    
   $response = $client->runReport($request);
   
   // Log da resposta
@@ -475,7 +475,6 @@ try {
   $pagesRequest->setDimensions([$pageDimension]);
   $pagesRequest->setMetrics([$pageMetric]);
   $pagesRequest->setLimit(10);
-  // Ordenação será feita pelo Google Analytics automaticamente
   
   $pagesResponse = $client->runReport($pagesRequest);
 
@@ -506,7 +505,6 @@ try {
   $trafficRequest->setDimensions([$trafficDimension]);
   $trafficRequest->setMetrics([$trafficMetric]);
   $trafficRequest->setLimit(10);
-  // Ordenação será feita pelo Google Analytics automaticamente
   
   $trafficResponse = $client->runReport($trafficRequest);
 
@@ -947,7 +945,7 @@ try {
       'start' => $startDate,
       'end' => $endDate,
       'days' => $days,
-    ],
+    ]
   ];
   
   // Adicionar informações de validação se solicitado

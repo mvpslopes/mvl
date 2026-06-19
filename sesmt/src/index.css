@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-sesmt-page text-sesmt-forest font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .sesmt-card {
+    @apply bg-white rounded-sesmt shadow-sesmt p-6;
+  }
+
+  .sesmt-card-mint {
+    @apply bg-sesmt-forest-muted rounded-sesmt p-6;
+  }
+
+  .sesmt-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] bg-sesmt-forest text-white text-sm font-semibold hover:bg-[#243F30] transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .sesmt-btn-accent {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] bg-sesmt-accent text-white text-sm font-semibold hover:bg-[#0D42B8] transition-colors disabled:opacity-50;
+  }
+
+  .sesmt-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-[10px] text-sesmt-forest text-sm font-medium hover:bg-sesmt-forest/5 transition-colors;
+  }
+
+  .sesmt-input {
+    @apply w-full h-10 px-3.5 rounded-[10px] border border-sesmt-forest/20 bg-white text-sm text-sesmt-forest placeholder:text-sesmt-forest/50 focus:outline-none focus:border-sesmt-accent focus:ring-[3px] focus:ring-sesmt-accent/25;
+  }
+
+  .sesmt-label {
+    @apply block text-[13px] font-medium text-sesmt-forest mb-1.5;
+  }
+}

@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import heroBg from '../assets/hero-bg.jpg';
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -14,17 +15,26 @@ export default function Hero() {
   return (
     <section id="inicio" className="px-0 animate-fade-up">
       <div className="relative overflow-hidden bg-black">
-        {/* Radial glow */}
+        {/* Hero background image */}
+        <img
+          src={heroBg}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 z-0 h-full w-full object-cover object-center"
+        />
+        {/* Dark overlay para legibilidade */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/65 via-black/45 to-black/20" />
+        {/* Radial glow brand */}
         <div
-          className="absolute inset-0 opacity-80"
+          className="absolute inset-0 z-[2] opacity-70"
           style={{
             background:
-              'radial-gradient(900px 420px at 18% 40%, rgba(16,82,224,0.30) 0%, rgba(16,82,224,0.06) 45%, rgba(0,0,0,0) 70%)',
+              'radial-gradient(900px 420px at 18% 40%, rgba(16,82,224,0.40) 0%, rgba(16,82,224,0.10) 45%, rgba(0,0,0,0) 70%)',
           }}
         />
         {/* Subtle grid */}
         <div
-          className="absolute inset-0 opacity-[0.12]"
+          className="absolute inset-0 z-[2] opacity-[0.08]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)',
@@ -34,7 +44,7 @@ export default function Hero() {
         {/* Brand line */}
         <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/70 to-transparent" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-28 md:pt-36 pb-16 md:pb-24 min-h-[420px] md:min-h-[560px] flex items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-28 md:pt-36 pb-16 md:pb-24 min-h-[420px] md:min-h-[560px] flex items-center">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-white/80">
               <span className="inline-block h-2 w-2 rounded-full bg-brand shadow-[0_0_0_4px_rgba(16,82,224,0.18)]" />

@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+.env
+api/config.local.php
+api/vendor/
+api/uploads/*
+!api/uploads/.gitkeep
+api/data/cidades-mg-nomes.json
