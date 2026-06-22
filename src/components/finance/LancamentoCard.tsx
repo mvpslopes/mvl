@@ -1,5 +1,11 @@
 import type { Lancamento } from '../../types/financeiro';
-import { formatBRL, lancamentoConcluido, valorRealizadoLancamento } from '../../lib/financeFormat';
+import {
+  classesVisualLancamento,
+  formatBRL,
+  lancamentoConcluido,
+  lancamentoEstaVencido,
+  valorRealizadoLancamento,
+} from '../../lib/financeFormat';
 import { LancamentoActions, StatusBadge } from './LancamentoRow';
 
 type Props = {
@@ -22,21 +28,14 @@ export default function LancamentoCard({
   onEdit,
 }: Props) {
   const isReceita = l.tipo === 'receita';
-  const ehRecorrente = !!l.recorrencia_id;
   const concluido = lancamentoConcluido(l.status);
+  const vencida = lancamentoEstaVencido(l);
   const real = valorRealizadoLancamento(l);
   const difere = concluido && l.valor_realizado != null && l.valor_realizado !== l.valor;
+  const cardClass = classesVisualLancamento(l, selected, 'card');
 
   return (
-    <article
-      className={`rounded-xl border p-3 transition-colors ${
-        selected
-          ? 'border-sky-300 bg-sky-50 ring-1 ring-sky-200'
-          : ehRecorrente
-            ? 'border-violet-100 bg-violet-50/40'
-            : 'border-slate-100 bg-white'
-      }`}
-    >
+    <article className={`rounded-xl border p-3 transition-colors ${cardClass}`}>
       <div className="flex gap-3">
         {onSelect && (
           <input
@@ -50,11 +49,14 @@ export default function LancamentoCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
             <p className="font-medium text-sm leading-snug">{l.descricao}</p>
-            <StatusBadge status={l.status} />
+            <StatusBadge status={l.status} lancamento={l} />
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 mb-2">
-            {ehRecorrente && <span className="text-[10px] text-violet-600 font-medium">Recorrente</span>}
+            {!!l.recorrencia_id && <span className="text-[10px] text-violet-700 font-medium">Recorrente</span>}
+            {vencida && (
+              <span className="text-[10px] font-semibold text-red-700 uppercase tracking-wide">Atrasada</span>
+            )}
             {l.categoria_nome && (
               <span
                 className="inline-flex text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600"
@@ -68,7 +70,7 @@ export default function LancamentoCard({
           </div>
 
           <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs text-slate-500 mb-2">
-            <span>
+            <span className={vencida ? 'font-medium text-red-700' : ''}>
               Venc. {new Date(l.data_vencimento + 'T12:00:00').toLocaleDateString('pt-BR')}
             </span>
             {concluido && l.data_efetivacao && (

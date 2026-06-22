@@ -304,6 +304,27 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
     await carregar();
   };
 
+  const excluirRecorrencia = async (recorrenciaId: number, descricao: string) => {
+    if (
+      !confirm(
+        `Excluir a recorrência "${descricao}" e TODOS os lançamentos registrados em todos os meses? Esta ação não pode ser desfeita.`
+      )
+    ) {
+      return;
+    }
+    const res = await finFetch<{ resultado: { lancamentos_removidos: number } }>(
+      `/recorrencias.php?id=${recorrenciaId}`,
+      { method: 'DELETE', body: { id: recorrenciaId } }
+    );
+    const n = res.resultado?.lancamentos_removidos ?? 0;
+    setModal(false);
+    setEditing(null);
+    await carregar();
+    if (n > 0) {
+      alert(`Recorrência excluída. ${n} lançamento(s) removido(s).`);
+    }
+  };
+
   const abrirEdicao = async (item: Lancamento) => {
     setEditing(item);
     setForm({
@@ -470,7 +491,7 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
       <FinMesVencimentos itens={vencimentosProximos} />
 
       {resumo && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="panel-card !p-3 sm:!p-6">
             <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Receitas realizadas</p>
             <p className="text-lg sm:text-2xl font-bold text-emerald-600">{formatBRL(resumo.receitas_realizadas)}</p>
@@ -481,18 +502,42 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
             <p className="text-lg sm:text-2xl font-bold text-red-600">{formatBRL(resumo.despesas_realizadas)}</p>
             {resumo.variacao && <VariacaoLinha diff={-resumo.variacao.despesas_realizadas} />}
           </div>
-          <div className="panel-card !p-3 sm:!p-6 col-span-2 sm:col-span-1">
-            <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Saldo realizado</p>
+          <div className="panel-card !p-3 sm:!p-6">
+            <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Saldo realizado do mês</p>
             <p className={`text-lg sm:text-2xl font-bold ${resumo.saldo_realizado >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {formatBRL(resumo.saldo_realizado)}
             </p>
             {resumo.variacao && <VariacaoLinha diff={resumo.variacao.saldo_realizado} />}
           </div>
+          <div className="panel-card !p-3 sm:!p-6 col-span-2 lg:col-span-1 border-violet-200 bg-violet-50/50">
+            <p className="text-[10px] sm:text-xs text-violet-700 uppercase font-semibold">Saldo realizado acumulado</p>
+            <p
+              className={`text-lg sm:text-2xl font-bold ${
+                (resumo.saldo_acumulado_realizado ?? resumo.saldo_realizado) >= 0 ? 'text-emerald-600' : 'text-red-600'
+              }`}
+            >
+              {formatBRL(resumo.saldo_acumulado_realizado ?? resumo.saldo_realizado)}
+            </p>
+            {resumo.saldo_acumulado_realizado_anterior != null && (
+              <p className="text-[10px] text-slate-500 mt-1 leading-snug">
+                {resumo.mes_anterior_ref ? (
+                  <>
+                    {formatBRL(resumo.saldo_acumulado_realizado_anterior)} em {mesLabel(resumo.mes_anterior_ref)}
+                    {' + '}
+                    {formatBRL(resumo.saldo_realizado)} neste mês
+                  </>
+                ) : (
+                  <>Saldo inicial + movimentação do mês</>
+                )}
+              </p>
+            )}
+            <p className="text-[10px] text-violet-600 mt-0.5">Este valor segue para o próximo mês</p>
+          </div>
         </div>
       )}
 
       {resumo && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="panel-card !p-3 sm:!p-6">
             <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Receitas previstas</p>
             <p className="text-lg sm:text-2xl font-bold text-emerald-600">{formatBRL(resumo.receitas_previstas)}</p>
@@ -503,15 +548,27 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
             <p className="text-lg sm:text-2xl font-bold text-red-600">{formatBRL(resumo.despesas_previstas)}</p>
             {resumo.variacao && <VariacaoLinha diff={-resumo.variacao.despesas_previstas} />}
           </div>
-          <div className="panel-card !p-3 sm:!p-6 col-span-2 sm:col-span-1">
-            <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Saldo previsto</p>
+          <div className="panel-card !p-3 sm:!p-6">
+            <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Saldo previsto do mês</p>
             <p className={`text-lg sm:text-2xl font-bold ${resumo.saldo_previsto >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {formatBRL(resumo.saldo_previsto)}
             </p>
             {resumo.variacao && <VariacaoLinha diff={resumo.variacao.saldo_previsto} />}
-            {resumo.mes_anterior_ref && (
-              <p className="text-[10px] text-slate-400 mt-1">
-                Comparado com {mesLabel(resumo.mes_anterior_ref)}
+          </div>
+          <div className="panel-card !p-3 sm:!p-6 col-span-2 lg:col-span-1 border-slate-200 bg-slate-50/80">
+            <p className="text-[10px] sm:text-xs text-slate-600 uppercase font-semibold">Saldo previsto acumulado</p>
+            <p
+              className={`text-lg sm:text-2xl font-bold ${
+                (resumo.saldo_acumulado_previsto ?? resumo.saldo_previsto) >= 0 ? 'text-emerald-600' : 'text-red-600'
+              }`}
+            >
+              {formatBRL(resumo.saldo_acumulado_previsto ?? resumo.saldo_previsto)}
+            </p>
+            {resumo.saldo_acumulado_previsto_anterior != null && resumo.mes_anterior_ref && (
+              <p className="text-[10px] text-slate-500 mt-1 leading-snug">
+                {formatBRL(resumo.saldo_acumulado_previsto_anterior)} em {mesLabel(resumo.mes_anterior_ref)}
+                {' + '}
+                {formatBRL(resumo.saldo_previsto)} neste mês
               </p>
             )}
           </div>
@@ -827,6 +884,15 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
           )}
 
           {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+          {editing?.recorrencia_id && editEscopo === 'recorrencia' && (
+            <button
+              type="button"
+              className="w-full panel-btn-ghost text-red-600 border border-red-200 hover:bg-red-50"
+              onClick={() => excluirRecorrencia(editing.recorrencia_id!, editing.descricao)}
+            >
+              Excluir recorrência e todos os lançamentos
+            </button>
+          )}
           <div className="flex gap-2">
             <button type="button" className="panel-btn-ghost flex-1" onClick={() => setModal(false)}>Cancelar</button>
             <button type="button" className="panel-btn-primary flex-1" onClick={salvar}>Salvar</button>

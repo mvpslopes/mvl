@@ -1,5 +1,12 @@
 import type { Lancamento } from '../../types/financeiro';
-import { formatBRL, lancamentoConcluido, valorRealizadoLancamento } from '../../lib/financeFormat';
+import {
+  classesVisualLancamento,
+  diasAtrasoLancamento,
+  formatBRL,
+  lancamentoConcluido,
+  lancamentoEstaVencido,
+  valorRealizadoLancamento,
+} from '../../lib/financeFormat';
 
 type ActionProps = {
   l: Lancamento;
@@ -12,10 +19,26 @@ type ActionProps = {
   onEdit: (l: Lancamento) => void;
 };
 
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({
+  status,
+  lancamento,
+}: {
+  status: string;
+  lancamento?: Pick<Lancamento, 'status' | 'data_vencimento'>;
+}) {
+  const vencida = lancamento ? lancamentoEstaVencido(lancamento) : false;
+
+  if (vencida) {
+    const dias = diasAtrasoLancamento(lancamento!.data_vencimento);
+    return (
+      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-red-200 text-red-800 shrink-0">
+        Vencida{dias > 0 ? ` · ${dias}d` : ''}
+      </span>
+    );
+  }
   if (status === 'recebida' || status === 'paga') {
     return (
-      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 shrink-0">
+      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-white/70 text-emerald-800 border border-emerald-300 shrink-0">
         Concluído
       </span>
     );
@@ -122,17 +145,14 @@ export function LancamentoRow({
 }: Props) {
   const l = lancamento;
   const isReceita = l.tipo === 'receita';
-  const ehRecorrente = !!l.recorrencia_id;
   const concluido = lancamentoConcluido(l.status);
+  const vencida = lancamentoEstaVencido(l);
   const real = valorRealizadoLancamento(l);
   const difere = concluido && l.valor_realizado != null && l.valor_realizado !== l.valor;
+  const rowClass = classesVisualLancamento(l, selected, 'row');
 
   return (
-    <tr
-      className={`border-t border-slate-100 transition-colors ${
-        selected ? 'bg-sky-50 ring-1 ring-inset ring-sky-200' : ehRecorrente ? 'bg-violet-50/40' : ''
-      }`}
-    >
+    <tr className={`border-t border-slate-100 transition-colors ${rowClass}`}>
       <td className="px-3 py-3 w-10">
         {onSelect && (
           <input
@@ -147,7 +167,10 @@ export function LancamentoRow({
       <td className="px-4 py-3">
         <p className="font-medium text-sm">{l.descricao}</p>
         <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-          {ehRecorrente && <span className="text-[11px] text-violet-600">Recorrente</span>}
+          {!!l.recorrencia_id && <span className="text-[11px] text-violet-700 font-medium">Recorrente</span>}
+          {vencida && (
+            <span className="text-[11px] font-semibold text-red-700 uppercase tracking-wide">Atrasada</span>
+          )}
           {l.categoria_nome && (
             <span
               className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600"
@@ -159,7 +182,9 @@ export function LancamentoRow({
         </div>
       </td>
       <td className="px-4 py-3 text-sm text-slate-600">
-        <p>{new Date(l.data_vencimento + 'T12:00:00').toLocaleDateString('pt-BR')}</p>
+        <p className={vencida ? 'font-medium text-red-700' : ''}>
+          {new Date(l.data_vencimento + 'T12:00:00').toLocaleDateString('pt-BR')}
+        </p>
         {concluido && l.data_efetivacao && (
           <p className="text-[11px] text-emerald-700">
             Efetivado {new Date(l.data_efetivacao + 'T12:00:00').toLocaleDateString('pt-BR')}
@@ -183,7 +208,7 @@ export function LancamentoRow({
         )}
       </td>
       <td className="px-4 py-3">
-        <StatusBadge status={l.status} />
+        <StatusBadge status={l.status} lancamento={l} />
       </td>
       <td className="px-4 py-3">
         <LancamentoActions

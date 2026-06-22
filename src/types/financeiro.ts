@@ -24,6 +24,7 @@ export type Lancamento = {
   categoria_cor?: string | null;
   recorrencia_id: number | null;
   projetado?: boolean;
+  alerta_vencimento?: 'vencida' | 'proxima';
 };
 
 export type Recorrencia = {
@@ -48,6 +49,8 @@ export type ResumoMes = {
   saldo_realizado: number;
   saldo_acumulado_previsto?: number;
   saldo_acumulado_realizado?: number;
+  saldo_acumulado_previsto_anterior?: number;
+  saldo_acumulado_realizado_anterior?: number;
   mes_anterior_ref?: string;
   mes_anterior?: ResumoMes;
   variacao?: {

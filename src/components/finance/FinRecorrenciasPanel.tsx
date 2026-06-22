@@ -145,9 +145,19 @@ export default function FinRecorrenciasPanel() {
                     type="button"
                     className="panel-btn-ghost flex-1 text-xs py-2 text-red-600"
                     onClick={async () => {
-                      if (!confirm('Excluir esta recorrência? Lançamentos já registrados nos meses permanecem.')) return;
-                      await finFetch(`/recorrencias.php?id=${r.id}`, { method: 'DELETE', body: { id: r.id } });
+                      if (
+                        !confirm(
+                          'Excluir esta recorrência e TODOS os lançamentos registrados em todos os meses? Esta ação não pode ser desfeita.'
+                        )
+                      )
+                        return;
+                      const res = await finFetch<{ resultado: { lancamentos_removidos: number } }>(
+                        `/recorrencias.php?id=${r.id}`,
+                        { method: 'DELETE', body: { id: r.id } }
+                      );
+                      const n = res.resultado?.lancamentos_removidos ?? 0;
                       carregar();
+                      if (n > 0) alert(`Recorrência excluída. ${n} lançamento(s) removido(s).`);
                     }}
                   >
                     <Trash2 size={14} /> Excluir
@@ -205,9 +215,19 @@ export default function FinRecorrenciasPanel() {
                         type="button"
                         className="panel-btn-ghost p-2 text-red-600"
                         onClick={async () => {
-                          if (!confirm('Excluir esta recorrência? Lançamentos já registrados nos meses permanecem.')) return;
-                          await finFetch(`/recorrencias.php?id=${r.id}`, { method: 'DELETE', body: { id: r.id } });
+                          if (
+                            !confirm(
+                              'Excluir esta recorrência e TODOS os lançamentos registrados em todos os meses? Esta ação não pode ser desfeita.'
+                            )
+                          )
+                            return;
+                          const res = await finFetch<{ resultado: { lancamentos_removidos: number } }>(
+                            `/recorrencias.php?id=${r.id}`,
+                            { method: 'DELETE', body: { id: r.id } }
+                          );
+                          const n = res.resultado?.lancamentos_removidos ?? 0;
                           carregar();
+                          if (n > 0) alert(`Recorrência excluída. ${n} lançamento(s) removido(s).`);
                         }}
                       >
                         <Trash2 size={16} />
