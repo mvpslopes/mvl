@@ -1,0 +1,11 @@
+# Repassa Authorization para PHP (Apache/CGI)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# Alguns hosts bloqueiam PATCH/PUT — o app usa POST + X-HTTP-Method-Override
+<IfModule mod_allowmethods.c>
+  AllowMethods GET POST PUT PATCH DELETE OPTIONS
+</IfModule>

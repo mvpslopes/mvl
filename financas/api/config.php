@@ -9,7 +9,7 @@ fin_options_exit();
 fin_require_auth();
 
 $svc = fin_load_service();
-$method = $_SERVER['REQUEST_METHOD'];
+$method = fin_request_method();
 
 if ($method === 'GET') {
     fin_json(['success' => true, 'config' => $svc->getConfig()]);

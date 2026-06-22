@@ -172,10 +172,19 @@ final class FinanceService
         return $this->getRecorrencia($id);
     }
 
-    public function deleteRecorrencia(int $id): void
+    public function deleteRecorrencia(int $id): array
     {
         $this->ensureFinTables();
+        $this->getRecorrencia($id);
+
+        $countStmt = $this->pdo->prepare('SELECT COUNT(*) FROM fin_lancamentos WHERE recorrencia_id = :id');
+        $countStmt->execute(['id' => $id]);
+        $lancamentosRemovidos = (int) $countStmt->fetchColumn();
+
+        $this->pdo->prepare('DELETE FROM fin_lancamentos WHERE recorrencia_id = :id')->execute(['id' => $id]);
         $this->pdo->prepare('DELETE FROM fin_recorrencias WHERE id = :id')->execute(['id' => $id]);
+
+        return ['lancamentos_removidos' => $lancamentosRemovidos];
     }
 
     public function getRecorrencia(int $id): array
@@ -384,7 +393,19 @@ final class FinanceService
         $atual = $this->resumoMes($mesReferencia);
         $antMes = $this->mesAnterior($mesReferencia);
         $anterior = $this->resumoMes($antMes);
-        return array_merge($atual, [
+        $acumulado = $this->saldoAcumuladoAteMes($mesReferencia);
+        $config = $this->getConfig();
+        $refYm = substr($config['data_referencia'], 0, 7);
+        $acumuladoAnterior = $antMes < $refYm
+            ? [
+                'saldo_acumulado_previsto' => round((float) $config['saldo_referencia'], 2),
+                'saldo_acumulado_realizado' => round((float) $config['saldo_referencia'], 2),
+            ]
+            : $this->saldoAcumuladoAteMes($antMes);
+
+        return array_merge($atual, $acumulado, [
+            'saldo_acumulado_previsto_anterior' => $acumuladoAnterior['saldo_acumulado_previsto'],
+            'saldo_acumulado_realizado_anterior' => $acumuladoAnterior['saldo_acumulado_realizado'],
             'mes_anterior_ref' => $antMes,
             'mes_anterior' => $anterior,
             'variacao' => [
@@ -398,9 +419,32 @@ final class FinanceService
         ]);
     }
 
+    /** Saldo acumulado até o fim do mês, a partir do saldo inicial configurado. */
+    public function saldoAcumuladoAteMes(string $ym): array
+    {
+        $config = $this->getConfig();
+        $refYm = substr($config['data_referencia'], 0, 7);
+        $saldoAcumPrev = (float) $config['saldo_referencia'];
+        $saldoAcumReal = (float) $config['saldo_referencia'];
+
+        if ($ym >= $refYm) {
+            foreach ($this->listarMesesEntre($refYm, $ym) as $mes) {
+                $t = $this->calcularTotais($this->lancamentosDoMes($mes));
+                $saldoAcumPrev += $t['saldo_previsto'];
+                $saldoAcumReal += $t['saldo_realizado'];
+            }
+        }
+
+        return [
+            'saldo_acumulado_previsto' => round($saldoAcumPrev, 2),
+            'saldo_acumulado_realizado' => round($saldoAcumReal, 2),
+        ];
+    }
+
     /** @param list<array<string, mixed>> $items */
     public function vencimentosProximos(array $items, string $mesReferencia): array
     {
+        $this->ensureFinTables();
         $hoje = date('Y-m-d');
         $mesAtual = date('Y-m');
         if ($mesReferencia !== $mesAtual) {
@@ -408,16 +452,78 @@ final class FinanceService
         }
         $limite = date('Y-m-d', strtotime($hoje . ' +7 days'));
         $out = [];
+        $idsVistos = [];
+
         foreach ($items as $it) {
             if (($it['status'] ?? '') !== 'prevista') {
                 continue;
             }
             $venc = $it['data_vencimento'];
-            if ($venc >= $hoje && $venc <= $limite) {
-                $out[] = $it;
+            if ($venc <= $limite) {
+                $out[] = $this->marcarAlertaVencimento($it, $hoje);
+                if (!empty($it['id'])) {
+                    $idsVistos[(int) $it['id']] = true;
+                }
             }
         }
-        usort($out, fn ($a, $b) => strcmp($a['data_vencimento'], $b['data_vencimento']));
+
+        foreach ($this->fetchVencidasAnteriores($hoje, $mesAtual, $idsVistos) as $it) {
+            $out[] = $this->marcarAlertaVencimento($it, $hoje);
+        }
+
+        usort($out, function ($a, $b) {
+            $va = ($a['alerta_vencimento'] ?? '') === 'vencida' ? 0 : 1;
+            $vb = ($b['alerta_vencimento'] ?? '') === 'vencida' ? 0 : 1;
+            if ($va !== $vb) {
+                return $va - $vb;
+            }
+
+            return strcmp($a['data_vencimento'], $b['data_vencimento']);
+        });
+
+        return $out;
+    }
+
+    /** @param array<string, mixed> $it */
+    private function marcarAlertaVencimento(array $it, string $hoje): array
+    {
+        return array_merge($it, [
+            'alerta_vencimento' => $it['data_vencimento'] < $hoje ? 'vencida' : 'proxima',
+        ]);
+    }
+
+    /**
+     * @param array<int, true> $excludeIds
+     * @return list<array<string, mixed>>
+     */
+    private function fetchVencidasAnteriores(string $hoje, string $mesAtual, array $excludeIds): array
+    {
+        $stmt = $this->pdo->prepare('
+            SELECT l.*,
+                c.nome AS categoria_nome,
+                c.cor AS categoria_cor,
+                r.categoria_id AS rec_categoria_id,
+                cr.nome AS rec_categoria_nome,
+                cr.cor AS rec_categoria_cor
+            FROM fin_lancamentos l
+            LEFT JOIN fin_recorrencias r ON r.id = l.recorrencia_id
+            LEFT JOIN fin_categorias c ON c.id = l.categoria_id
+            LEFT JOIN fin_categorias cr ON cr.id = r.categoria_id
+            WHERE l.status = "prevista"
+              AND l.data_vencimento < :hoje
+              AND l.mes_referencia < :mes
+            ORDER BY l.data_vencimento ASC
+        ');
+        $stmt->execute(['hoje' => $hoje, 'mes' => $mesAtual]);
+        $out = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $id = (int) $row['id'];
+            if (isset($excludeIds[$id])) {
+                continue;
+            }
+            $out[] = $this->mapLancamento($row, false);
+        }
+
         return $out;
     }
 

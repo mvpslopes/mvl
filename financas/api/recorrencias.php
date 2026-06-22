@@ -9,7 +9,7 @@ fin_options_exit();
 fin_require_auth();
 
 $svc = fin_load_service();
-$method = $_SERVER['REQUEST_METHOD'];
+$method = fin_request_method();
 
 try {
     if ($method === 'GET') {
@@ -43,8 +43,8 @@ try {
         if ($id <= 0) {
             fin_json(['success' => false, 'message' => 'ID obrigatório.'], 400);
         }
-        $svc->deleteRecorrencia($id);
-        fin_json(['success' => true]);
+        $resultado = $svc->deleteRecorrencia($id);
+        fin_json(['success' => true, 'resultado' => $resultado]);
     }
 } catch (InvalidArgumentException $e) {
     fin_json(['success' => false, 'message' => $e->getMessage()], 400);

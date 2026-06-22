@@ -74,7 +74,7 @@ function fin_cors(): void
 {
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-HTTP-Method-Override, X-Method-Override');
     header('Content-Type: application/json; charset=utf-8');
 }
 
@@ -85,6 +85,27 @@ function fin_options_exit(): void
         http_response_code(200);
         exit;
     }
+}
+
+/** Método HTTP efetivo (suporta POST + X-HTTP-Method-Override em hospedagens que bloqueiam PATCH/PUT). */
+function fin_request_method(): string
+{
+    $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+    if ($method !== 'POST') {
+        return $method;
+    }
+
+    $override = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']
+        ?? $_SERVER['HTTP_X_METHOD_OVERRIDE']
+        ?? '';
+
+    $override = strtoupper(trim((string) $override));
+    if (in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+        return $override;
+    }
+
+    return $method;
 }
 
 function fin_json_input(): array
