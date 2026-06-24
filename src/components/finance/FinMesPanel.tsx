@@ -491,7 +491,7 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
       <FinMesVencimentos itens={vencimentosProximos} />
 
       {resumo && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="panel-card !p-3 sm:!p-6">
             <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Receitas realizadas</p>
             <p className="text-lg sm:text-2xl font-bold text-emerald-600">{formatBRL(resumo.receitas_realizadas)}</p>
@@ -502,36 +502,12 @@ export default function FinMesPanel({ mes, onMesChange }: Props) {
             <p className="text-lg sm:text-2xl font-bold text-red-600">{formatBRL(resumo.despesas_realizadas)}</p>
             {resumo.variacao && <VariacaoLinha diff={-resumo.variacao.despesas_realizadas} />}
           </div>
-          <div className="panel-card !p-3 sm:!p-6">
+          <div className="panel-card !p-3 sm:!p-6 col-span-2 sm:col-span-1">
             <p className="text-[10px] sm:text-xs text-slate-500 uppercase">Saldo realizado do mês</p>
             <p className={`text-lg sm:text-2xl font-bold ${resumo.saldo_realizado >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
               {formatBRL(resumo.saldo_realizado)}
             </p>
             {resumo.variacao && <VariacaoLinha diff={resumo.variacao.saldo_realizado} />}
-          </div>
-          <div className="panel-card !p-3 sm:!p-6 col-span-2 lg:col-span-1 border-violet-200 bg-violet-50/50">
-            <p className="text-[10px] sm:text-xs text-violet-700 uppercase font-semibold">Saldo realizado acumulado</p>
-            <p
-              className={`text-lg sm:text-2xl font-bold ${
-                (resumo.saldo_acumulado_realizado ?? resumo.saldo_realizado) >= 0 ? 'text-emerald-600' : 'text-red-600'
-              }`}
-            >
-              {formatBRL(resumo.saldo_acumulado_realizado ?? resumo.saldo_realizado)}
-            </p>
-            {resumo.saldo_acumulado_realizado_anterior != null && (
-              <p className="text-[10px] text-slate-500 mt-1 leading-snug">
-                {resumo.mes_anterior_ref ? (
-                  <>
-                    {formatBRL(resumo.saldo_acumulado_realizado_anterior)} em {mesLabel(resumo.mes_anterior_ref)}
-                    {' + '}
-                    {formatBRL(resumo.saldo_realizado)} neste mês
-                  </>
-                ) : (
-                  <>Saldo inicial + movimentação do mês</>
-                )}
-              </p>
-            )}
-            <p className="text-[10px] text-violet-600 mt-0.5">Este valor segue para o próximo mês</p>
           </div>
         </div>
       )}

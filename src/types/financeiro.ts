@@ -48,9 +48,7 @@ export type ResumoMes = {
   despesas_realizadas: number;
   saldo_realizado: number;
   saldo_acumulado_previsto?: number;
-  saldo_acumulado_realizado?: number;
   saldo_acumulado_previsto_anterior?: number;
-  saldo_acumulado_realizado_anterior?: number;
   mes_anterior_ref?: string;
   mes_anterior?: ResumoMes;
   variacao?: {

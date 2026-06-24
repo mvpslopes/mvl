@@ -235,7 +235,7 @@ export default function FinAnoPanel({ onOpenMes }: Props) {
                     <th className="px-4 py-3 font-semibold text-emerald-700">Receitas</th>
                     <th className="px-4 py-3 font-semibold text-red-600">Despesas</th>
                     <th className="px-4 py-3 font-semibold">Saldo mês</th>
-                    <th className="px-4 py-3 font-semibold">Saldo acumulado</th>
+                    {modo === 'previsto' && <th className="px-4 py-3 font-semibold">Saldo acumulado</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -243,8 +243,7 @@ export default function FinAnoPanel({ onOpenMes }: Props) {
                     const rec = modo === 'previsto' ? m.receitas_previstas : m.receitas_realizadas;
                     const desp = modo === 'previsto' ? m.despesas_previstas : m.despesas_realizadas;
                     const saldo = modo === 'previsto' ? m.saldo_previsto : m.saldo_realizado;
-                    const acum =
-                      modo === 'previsto' ? m.saldo_acumulado_previsto : m.saldo_acumulado_realizado;
+                    const acum = m.saldo_acumulado_previsto;
                     return (
                       <tr key={m.mes} className="border-t border-slate-100 hover:bg-slate-50/80">
                         <td className="px-4 py-3">
@@ -261,9 +260,11 @@ export default function FinAnoPanel({ onOpenMes }: Props) {
                         <td className={`px-4 py-3 font-medium ${saldo >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>
                           {formatBRL(saldo)}
                         </td>
-                        <td className={`px-4 py-3 font-semibold ${(acum ?? 0) < 0 ? 'text-red-600' : ''}`}>
-                          {formatBRL(acum ?? 0)}
-                        </td>
+                        {modo === 'previsto' && (
+                          <td className={`px-4 py-3 font-semibold ${(acum ?? 0) < 0 ? 'text-red-600' : ''}`}>
+                            {formatBRL(acum ?? 0)}
+                          </td>
+                        )}
                       </tr>
                     );
                   })}
@@ -277,8 +278,6 @@ export default function FinAnoPanel({ onOpenMes }: Props) {
               const rec = modo === 'previsto' ? m.receitas_previstas : m.receitas_realizadas;
               const desp = modo === 'previsto' ? m.despesas_previstas : m.despesas_realizadas;
               const saldo = modo === 'previsto' ? m.saldo_previsto : m.saldo_realizado;
-              const acum =
-                modo === 'previsto' ? m.saldo_acumulado_previsto : m.saldo_acumulado_realizado;
               return (
                 <button
                   key={m.mes}
@@ -297,7 +296,11 @@ export default function FinAnoPanel({ onOpenMes }: Props) {
                   <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-slate-600">
                     <span className="text-emerald-700">Rec. {formatBRL(rec)}</span>
                     <span className="text-red-600">Desp. {formatBRL(desp)}</span>
-                    <span className="col-span-2 text-slate-500">Acumulado {formatBRL(acum ?? 0)}</span>
+                    {modo === 'previsto' && (
+                      <span className="col-span-2 text-slate-500">
+                        Acumulado {formatBRL(m.saldo_acumulado_previsto ?? 0)}
+                      </span>
+                    )}
                   </div>
                 </button>
               );

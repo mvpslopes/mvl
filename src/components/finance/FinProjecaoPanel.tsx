@@ -61,7 +61,7 @@ export default function FinProjecaoPanel() {
                 <th className="px-4 py-3">Receitas</th>
                 <th className="px-4 py-3">Despesas</th>
                 <th className="px-4 py-3">Saldo mês</th>
-                <th className="px-4 py-3">Saldo acumulado</th>
+                {modo === 'previsto' && <th className="px-4 py-3">Saldo acumulado</th>}
               </tr>
             </thead>
             <tbody>
@@ -69,14 +69,18 @@ export default function FinProjecaoPanel() {
                 const rec = modo === 'previsto' ? m.receitas_previstas : m.receitas_realizadas;
                 const desp = modo === 'previsto' ? m.despesas_previstas : m.despesas_realizadas;
                 const saldo = modo === 'previsto' ? m.saldo_previsto : m.saldo_realizado;
-                const acum = modo === 'previsto' ? m.saldo_acumulado_previsto : m.saldo_acumulado_realizado;
+                const acum = m.saldo_acumulado_previsto;
                 return (
                   <tr key={m.mes} className="border-t border-slate-100">
                     <td className="px-4 py-3 font-medium">{mesLabel(m.mes)}</td>
                     <td className="px-4 py-3 text-emerald-700">{formatBRL(rec)}</td>
                     <td className="px-4 py-3 text-red-600">{formatBRL(desp)}</td>
                     <td className={`px-4 py-3 ${saldo >= 0 ? 'text-emerald-700' : 'text-red-600'}`}>{formatBRL(saldo)}</td>
-                    <td className={`px-4 py-3 font-semibold ${(acum ?? 0) < 0 ? 'text-red-600' : ''}`}>{formatBRL(acum ?? 0)}</td>
+                    {modo === 'previsto' && (
+                      <td className={`px-4 py-3 font-semibold ${(acum ?? 0) < 0 ? 'text-red-600' : ''}`}>
+                        {formatBRL(acum ?? 0)}
+                      </td>
+                    )}
                   </tr>
                 );
               })}

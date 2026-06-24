@@ -397,15 +397,12 @@ final class FinanceService
         $config = $this->getConfig();
         $refYm = substr($config['data_referencia'], 0, 7);
         $acumuladoAnterior = $antMes < $refYm
-            ? [
-                'saldo_acumulado_previsto' => round((float) $config['saldo_referencia'], 2),
-                'saldo_acumulado_realizado' => round((float) $config['saldo_referencia'], 2),
-            ]
-            : $this->saldoAcumuladoAteMes($antMes);
+            ? round((float) $config['saldo_referencia'], 2)
+            : $this->saldoAcumuladoAteMes($antMes)['saldo_acumulado_previsto'];
 
-        return array_merge($atual, $acumulado, [
-            'saldo_acumulado_previsto_anterior' => $acumuladoAnterior['saldo_acumulado_previsto'],
-            'saldo_acumulado_realizado_anterior' => $acumuladoAnterior['saldo_acumulado_realizado'],
+        return array_merge($atual, [
+            'saldo_acumulado_previsto' => $acumulado['saldo_acumulado_previsto'],
+            'saldo_acumulado_previsto_anterior' => $acumuladoAnterior,
             'mes_anterior_ref' => $antMes,
             'mes_anterior' => $anterior,
             'variacao' => [
