@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import BriefingPage from './pages/BriefingPage';
 import HomePage from './pages/HomePage';
 import RequireAuth from './routes/RequireAuth';
 import ThemeScope from './routes/ThemeScope';
@@ -9,6 +10,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/briefing" element={<BriefingPage />} />
       <Route
         path="/login"
         element={

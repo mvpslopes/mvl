@@ -5,13 +5,6 @@ import heroBg from '../assets/hero-bg.jpg';
 export default function Hero() {
   const navigate = useNavigate();
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <section id="inicio" className="px-0 animate-fade-up">
       <div className="relative overflow-hidden bg-black">
@@ -65,7 +58,7 @@ export default function Hero() {
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <button onClick={() => scrollToSection('contato')} className="btn-brand w-full sm:w-auto">
+              <button onClick={() => navigate('/briefing')} className="btn-brand w-full sm:w-auto">
                 Solicitar proposta
                 <ArrowRight size={20} />
               </button>

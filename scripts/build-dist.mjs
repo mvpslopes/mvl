@@ -66,4 +66,6 @@ console.log('\n✅ Build concluído!');
 console.log(`   Pasta: ${dist}`);
 console.log('   Painel: /dashboard (menus Finanças no sidebar)');
 console.log('   Instalar DB finanças: GET /api/financas/install.php?key=install');
-console.log('   Instalar DB projetos: GET /api/projetos/install.php?key=install\n');
+console.log('   Instalar DB projetos: GET /api/projetos/install.php?key=install');
+console.log('   Briefing público: /briefing · Admin: Dashboard → Briefings');
+console.log('   (Garantir pasta api/briefing/dados gravável e post_max_size ≥ 20M)\n');

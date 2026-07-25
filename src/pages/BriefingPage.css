@@ -1,0 +1,518 @@
+.briefing-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 480px at 10% -10%, rgba(16, 82, 224, 0.22), transparent 60%),
+    radial-gradient(700px 400px at 100% 0%, rgba(16, 185, 129, 0.1), transparent 55%),
+    #0b1220;
+  color: #1a1d26;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.briefing-shell {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.briefing-header {
+  color: #fff;
+  padding: 1rem 0 1.5rem;
+}
+
+.briefing-brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.briefing-logo {
+  height: 2.25rem;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .briefing-logo {
+    height: 2.75rem;
+  }
+}
+
+.briefing-kicker {
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.briefing-header h1 {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+  font-size: clamp(1.55rem, 4.2vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.2;
+  max-width: 18ch;
+}
+
+.briefing-stepper {
+  margin-top: 1.75rem;
+  padding: 1rem 0.85rem 1.1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.briefing-stepper-track {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 0.35rem 1rem;
+}
+
+.briefing-stepper-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1052e0, #34d399);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.briefing-steps-nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.briefing-steps-nav li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+}
+
+.briefing-step-num {
+  width: 1.85rem;
+  height: 1.85rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.briefing-step-label {
+  display: block;
+  width: 100%;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+@media (min-width: 480px) {
+  .briefing-stepper {
+    padding: 1.1rem 1.15rem 1.2rem;
+  }
+
+  .briefing-step-label {
+    font-size: 0.8rem;
+  }
+}
+
+.briefing-steps-nav li.is-active {
+  color: #fff;
+}
+
+.briefing-steps-nav li.is-active .briefing-step-num {
+  background: #1052e0;
+  border-color: #1052e0;
+  box-shadow: 0 0 0 4px rgba(16, 82, 224, 0.25);
+}
+
+.briefing-steps-nav li.is-done {
+  color: rgba(167, 243, 208, 0.9);
+}
+
+.briefing-steps-nav li.is-done .briefing-step-num {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: #34d399;
+  color: #6ee7b7;
+}
+
+.briefing-form {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.briefing-step h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.briefing-section-intro {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+.briefing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .briefing-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .briefing-span-2 {
+    grid-column: span 2;
+  }
+}
+
+.briefing-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+}
+
+.briefing-field > span {
+  font-weight: 600;
+  color: #334155;
+}
+
+.briefing-field input,
+.briefing-field select,
+.briefing-field textarea,
+.briefing-add-row input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.briefing-field input:focus,
+.briefing-field select:focus,
+.briefing-field textarea:focus,
+.briefing-add-row input:focus {
+  outline: none;
+  border-color: #1052e0;
+  box-shadow: 0 0 0 3px rgba(16, 82, 224, 0.15);
+}
+
+.briefing-hint {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.briefing-block {
+  margin-top: 1.5rem;
+}
+
+.briefing-block-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.briefing-block-title.mt,
+.briefing-field.mt {
+  margin-top: 1.25rem;
+}
+
+.briefing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.briefing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: #f8fafc;
+}
+
+.briefing-chip input {
+  display: none;
+}
+
+.briefing-chip.is-on {
+  background: rgba(16, 82, 224, 0.08);
+  border-color: #1052e0;
+  color: #1052e0;
+}
+
+.briefing-add-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.briefing-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  padding: 0 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.briefing-colors {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .briefing-colors {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.briefing-color {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.briefing-color-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.briefing-color-row input[type='color'] {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: none;
+}
+
+.briefing-color-row input[type='text'],
+.briefing-color-row input:not([type='color']) {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+}
+
+.briefing-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.briefing-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .briefing-cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.briefing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem;
+  border-radius: 0.85rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.briefing-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.briefing-card.is-on {
+  border-color: #1052e0;
+  box-shadow: 0 0 0 3px rgba(16, 82, 224, 0.12);
+  background: #fff;
+}
+
+.briefing-card-preview {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.briefing-style-swatch {
+  height: 2rem;
+  border-radius: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.brief-style-minimal .briefing-style-swatch {
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+}
+.brief-style-corp .briefing-style-swatch {
+  background: linear-gradient(135deg, #1e3a8a, #64748b);
+}
+.brief-style-creative .briefing-style-swatch {
+  background: linear-gradient(135deg, #f97316, #ec4899, #8b5cf6);
+}
+.brief-style-luxury .briefing-style-swatch {
+  background: linear-gradient(135deg, #111827, #d4af37);
+}
+.brief-style-organic .briefing-style-swatch {
+  background: linear-gradient(135deg, #166534, #a3e635);
+}
+
+.briefing-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.briefing-btn-primary,
+.briefing-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.15rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+}
+
+.briefing-btn-primary {
+  background: #1052e0;
+  color: #fff;
+}
+
+.briefing-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.briefing-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.briefing-error {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.briefing-hp {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.briefing-success {
+  margin-top: 4rem;
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 2.5rem 1.75rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+.briefing-success-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.25rem;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  display: grid;
+  place-items: center;
+}
+
+.briefing-success h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.briefing-success p {
+  margin: 0.75rem auto 1.5rem;
+  max-width: 28rem;
+  color: #64748b;
+}
+
+.briefing-success-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+.briefing-success-actions .briefing-btn-primary,
+.briefing-success-actions .briefing-btn-ghost {
+  width: 100%;
+  text-decoration: none;
+}

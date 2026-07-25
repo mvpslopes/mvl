@@ -23,6 +23,11 @@ dist-ssr
 .env
 api/credentials.json
 api/vendor/
+api/briefing/dados/briefings.json
+api/briefing/dados/briefings/*
+!api/briefing/dados/briefings/.htaccess
+!api/briefing/dados/briefings/.gitkeep
+api/briefing/dados/rate_limit.json
 sesmt/node_modules
 sesmt/dist
 sesmt/api/config.local.php

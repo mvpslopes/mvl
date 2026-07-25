@@ -16,8 +16,10 @@ import {
   Tags,
   CalendarDays,
   Inbox,
+  ClipboardList,
 } from 'lucide-react';
 import logoMvlBranco from '../../logo/logo_mvl-2_branco.png';
+import BriefingsPanel from './briefing/BriefingsPanel';
 import FinAnoPanel from './finance/FinAnoPanel';
 import FinCategoriasPanel from './finance/FinCategoriasPanel';
 import FinMesPanel from './finance/FinMesPanel';
@@ -36,6 +38,7 @@ type PanelSection =
   | 'fin-categorias'
   | 'proj-semana'
   | 'proj-backlog'
+  | 'briefing-lista'
   | 'users'
   | 'settings';
 
@@ -48,6 +51,7 @@ const sectionTitles: Record<PanelSection, string> = {
   'fin-categorias': 'Finanças — Categorias',
   'proj-semana': 'Projetos — Semana',
   'proj-backlog': 'Projetos — Backlog',
+  'briefing-lista': 'Briefings',
   users: 'Usuários',
   settings: 'Configurações',
 };
@@ -250,6 +254,10 @@ export default function Dashboard() {
     { id: 'proj-backlog', icon: Inbox, label: 'Backlog' },
   ];
 
+  const briefingNav: { id: PanelSection; icon: typeof ClipboardList; label: string }[] = [
+    { id: 'briefing-lista', icon: ClipboardList, label: 'Entradas' },
+  ];
+
   return (
     <div className="min-h-screen bg-[#F8F9FB] text-[#1A1D26] flex">
       {mobileNavOpen && (
@@ -334,6 +342,18 @@ export default function Dashboard() {
 
           {navExpanded && (
             <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              Briefings
+            </p>
+          )}
+          {briefingNav.map(({ id, icon: Icon, label }) => (
+            <button key={id} type="button" onClick={() => selectSection(id)} className={navItemClass(id)}>
+              <Icon size={18} strokeWidth={1.75} />
+              {navExpanded && <span>{label}</span>}
+            </button>
+          ))}
+
+          {navExpanded && (
+            <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
               Sistema
             </p>
           )}
@@ -407,6 +427,7 @@ export default function Dashboard() {
           {activeSection === 'fin-saldo' && <FinSaldoPanel />}
           {activeSection === 'proj-semana' && <ProjSemanaPanel />}
           {activeSection === 'proj-backlog' && <ProjBacklogPanel />}
+          {activeSection === 'briefing-lista' && <BriefingsPanel />}
 
           {activeSection === 'users' && (
             <div className="panel-card max-w-3xl">
