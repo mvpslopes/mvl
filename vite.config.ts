@@ -41,11 +41,20 @@ export default defineConfig({
                 '.DS_Store', // Arquivos do macOS
                 'Thumbs.db', // Arquivos do Windows
               ];
-              
+
               if (skipItems.includes(entry.name)) {
                 continue;
               }
-              
+
+              // Não publicar leads/uploads do briefing (permanecem só no servidor)
+              const isBriefingDados =
+                entry.name === 'dados' &&
+                (src.replace(/\\/g, '/').endsWith('/briefing') ||
+                  src.replace(/\\/g, '/').includes('/briefing/'));
+              if (isBriefingDados && entry.isDirectory()) {
+                continue;
+              }
+
               // Pular arquivos dentro de pastas .git
               if (srcPath.includes('.git')) {
                 continue;
@@ -73,7 +82,7 @@ export default defineConfig({
           };
           
           copyRecursive(apiDir, distApiDir);
-          console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json)');
+          console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json e briefing/dados)');
         }
 
         const htaccess = join(__dirname, 'public', '.htaccess');
