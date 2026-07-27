@@ -46,12 +46,15 @@ export default defineConfig({
                 continue;
               }
 
-              // Não publicar leads/uploads do briefing (permanecem só no servidor)
-              const isBriefingDados =
+              // Não publicar leads/uploads do briefing nem logos de clientes (permanecem só no servidor)
+              const srcNorm = src.replace(/\\/g, '/');
+              const isProtectedDados =
                 entry.name === 'dados' &&
-                (src.replace(/\\/g, '/').endsWith('/briefing') ||
-                  src.replace(/\\/g, '/').includes('/briefing/'));
-              if (isBriefingDados && entry.isDirectory()) {
+                (srcNorm.endsWith('/briefing') ||
+                  srcNorm.includes('/briefing/') ||
+                  srcNorm.endsWith('/clientes') ||
+                  srcNorm.includes('/clientes/'));
+              if (isProtectedDados && entry.isDirectory()) {
                 continue;
               }
 
@@ -82,7 +85,7 @@ export default defineConfig({
           };
           
           copyRecursive(apiDir, distApiDir);
-          console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json e briefing/dados)');
+          console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json, briefing/dados e clientes/dados)');
         }
 
         const htaccess = join(__dirname, 'public', '.htaccess');

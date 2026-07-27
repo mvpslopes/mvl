@@ -17,9 +17,11 @@ import {
   CalendarDays,
   Inbox,
   ClipboardList,
+  Building2,
 } from 'lucide-react';
 import logoMvlBranco from '../../logo/logo_mvl-2_branco.png';
 import BriefingsPanel from './briefing/BriefingsPanel';
+import ClientesPanel from './clientes/ClientesPanel';
 import FinAnoPanel from './finance/FinAnoPanel';
 import FinCategoriasPanel from './finance/FinCategoriasPanel';
 import FinMesPanel from './finance/FinMesPanel';
@@ -39,6 +41,7 @@ type PanelSection =
   | 'proj-semana'
   | 'proj-backlog'
   | 'briefing-lista'
+  | 'site-clientes'
   | 'users'
   | 'settings';
 
@@ -52,6 +55,7 @@ const sectionTitles: Record<PanelSection, string> = {
   'proj-semana': 'Projetos — Semana',
   'proj-backlog': 'Projetos — Backlog',
   'briefing-lista': 'Briefings',
+  'site-clientes': 'Site — Clientes',
   users: 'Usuários',
   settings: 'Configurações',
 };
@@ -258,6 +262,10 @@ export default function Dashboard() {
     { id: 'briefing-lista', icon: ClipboardList, label: 'Entradas' },
   ];
 
+  const siteNav: { id: PanelSection; icon: typeof Building2; label: string }[] = [
+    { id: 'site-clientes', icon: Building2, label: 'Clientes' },
+  ];
+
   return (
     <div className="min-h-screen bg-[#F8F9FB] text-[#1A1D26] flex">
       {mobileNavOpen && (
@@ -354,6 +362,18 @@ export default function Dashboard() {
 
           {navExpanded && (
             <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              Site
+            </p>
+          )}
+          {siteNav.map(({ id, icon: Icon, label }) => (
+            <button key={id} type="button" onClick={() => selectSection(id)} className={navItemClass(id)}>
+              <Icon size={18} strokeWidth={1.75} />
+              {navExpanded && <span>{label}</span>}
+            </button>
+          ))}
+
+          {navExpanded && (
+            <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
               Sistema
             </p>
           )}
@@ -428,6 +448,7 @@ export default function Dashboard() {
           {activeSection === 'proj-semana' && <ProjSemanaPanel />}
           {activeSection === 'proj-backlog' && <ProjBacklogPanel />}
           {activeSection === 'briefing-lista' && <BriefingsPanel />}
+          {activeSection === 'site-clientes' && <ClientesPanel />}
 
           {activeSection === 'users' && (
             <div className="panel-card max-w-3xl">

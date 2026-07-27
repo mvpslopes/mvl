@@ -57,11 +57,16 @@ if (existsSync(projetosApiSrc)) {
 // Site principal (dashboard com menus de finanças)
 run('npx vite build', root);
 
-// Garantir que leads/uploads do briefing nunca vão no deploy
+// Garantir que leads/uploads do briefing e logos de clientes nunca vão no deploy
 const briefingDadosDist = join(dist, 'api', 'briefing', 'dados');
 if (existsSync(briefingDadosDist)) {
   rmSync(briefingDadosDist, { recursive: true, force: true });
   console.log('✅ Removido dist/api/briefing/dados (não sobrescreve leads no servidor)');
+}
+const clientesDadosDist = join(dist, 'api', 'clientes', 'dados');
+if (existsSync(clientesDadosDist)) {
+  rmSync(clientesDadosDist, { recursive: true, force: true });
+  console.log('✅ Removido dist/api/clientes/dados (não sobrescreve logos no servidor)');
 }
 
 const htaccessRoot = join(root, 'public', '.htaccess');
@@ -75,5 +80,6 @@ console.log('   Painel: /dashboard (menus Finanças no sidebar)');
 console.log('   Instalar DB finanças: GET /api/financas/install.php?key=install');
 console.log('   Instalar DB projetos: GET /api/projetos/install.php?key=install');
 console.log('   Briefing público: /briefing · Admin: Dashboard → Briefings');
-console.log('   Deploy: NÃO envia api/briefing/dados — preserve essa pasta no servidor');
-console.log('   (Garantir pasta api/briefing/dados gravável e post_max_size ≥ 20M)\n');
+console.log('   Clientes: Dashboard → Site → Clientes');
+console.log('   Deploy: NÃO envia api/briefing/dados nem api/clientes/dados — preserve no servidor');
+console.log('   (Garantir pastas dados graváveis e post_max_size ≥ 20M)\n');

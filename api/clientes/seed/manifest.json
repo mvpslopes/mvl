@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Ariane Andrade",
+    "file": "ariane-andrade.png",
+    "bg_color": "#000000",
+    "url": ""
+  },
+  {
+    "name": "Enxovais Maciel",
+    "file": "enxovais-maciel.png",
+    "bg_color": "#000000",
+    "url": ""
+  },
+  {
+    "name": "Grupo Raça",
+    "file": "grupo-raca.png",
+    "bg_color": "#000000",
+    "url": "https://gruporaca.app.br/"
+  },
+  {
+    "name": "Jato Minas",
+    "file": "jato-minas.png",
+    "bg_color": "#FFFFFF",
+    "url": ""
+  },
+  {
+    "name": "JM Soluções em Créditos",
+    "file": "jm.png",
+    "bg_color": "#FFFFFF",
+    "url": "https://jmsolucoesmg.com.br/"
+  },
+  {
+    "name": "Toda Arte",
+    "file": "toda-arte.png",
+    "bg_color": "#000000",
+    "url": "https://todaarte.com.br/"
+  },
+  {
+    "name": "Raízes",
+    "file": "raizes.png",
+    "bg_color": "#FFFFFF",
+    "url": "https://raizeseventosltda.com.br/"
+  },
+  {
+    "name": "Real Driver",
+    "file": "real-driver.png",
+    "bg_color": "#FFFFFF",
+    "url": ""
+  }
+]

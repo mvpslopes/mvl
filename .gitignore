@@ -28,6 +28,10 @@ api/briefing/dados/briefings/*
 !api/briefing/dados/briefings/.htaccess
 !api/briefing/dados/briefings/.gitkeep
 api/briefing/dados/rate_limit.json
+api/clientes/dados/clientes.json
+api/clientes/dados/logos/*
+!api/clientes/dados/logos/.htaccess
+!api/clientes/dados/logos/.gitkeep
 sesmt/node_modules
 sesmt/dist
 sesmt/api/config.local.php
