@@ -56,6 +56,7 @@ type FormState = {
   has_logo: string;
   logo_url: string;
   brand_url: string;
+  photos_url: string;
   color_primary: string;
   color_secondary: string;
   color_accent: string;
@@ -89,6 +90,7 @@ const initial: FormState = {
   has_logo: '',
   logo_url: '',
   brand_url: '',
+  photos_url: '',
   color_primary: '#1052E0',
   color_secondary: '#1A1D26',
   color_accent: '#10B981',
@@ -531,6 +533,19 @@ export default function BriefingPage() {
                     onChange={(e) => setField('brand_url', e.target.value)}
                     placeholder="https://… (Drive, Figma, Dropbox…)"
                   />
+                </label>
+                <label className="briefing-field briefing-span-2">
+                  <span>Link com fotos, referências ou arquivos do projeto</span>
+                  <input
+                    type="url"
+                    value={form.photos_url}
+                    onChange={(e) => setField('photos_url', e.target.value)}
+                    placeholder="https://… (Drive, WeTransfer, Dropbox, pasta compartilhada…)"
+                  />
+                  <small className="briefing-hint">
+                    Se tiver fotos do espaço, produtos, equipe ou referências, envie aqui um link compartilhado.
+                    Se não tiver link agora, você pode mandar os arquivos depois pelo WhatsApp.
+                  </small>
                 </label>
               </div>
 

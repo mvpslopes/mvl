@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ClipboardList, Download, ExternalLink, MessageCircle, RefreshCw } from 'lucide-react';
+import { ClipboardList, Download, ExternalLink, MessageCircle, RefreshCw, Trash2 } from 'lucide-react';
 import { briefingAdminFetch, downloadBriefingFile } from '../../lib/briefingApi';
 import type { Briefing, BriefingStatus } from '../../types/briefing';
 import { BRIEFING_STATUS_LABEL } from '../../types/briefing';
@@ -81,6 +81,20 @@ export default function BriefingsPanel() {
     }
   };
 
+  const excluir = async (id: string) => {
+    if (!confirm('Excluir este briefing? Essa ação não pode ser desfeita.')) return;
+    try {
+      await briefingAdminFetch('/admin.php', {
+        method: 'DELETE',
+        json: { id },
+      });
+      setSelected(null);
+      carregar();
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : 'Erro ao excluir');
+    }
+  };
+
   return (
     <div className="max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
@@ -145,6 +159,9 @@ export default function BriefingsPanel() {
                   <MessageCircle size={14} /> WhatsApp
                 </a>
               )}
+              <button type="button" className="panel-btn-ghost text-xs text-red-600" onClick={() => excluir(selected.id)}>
+                <Trash2 size={14} /> Excluir
+              </button>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3 text-sm">
@@ -247,7 +264,7 @@ export default function BriefingsPanel() {
               </div>
             )}
 
-            {(selected.logo_file || selected.brand_file || selected.logo_url || selected.brand_url) && (
+            {(selected.logo_file || selected.brand_file || selected.logo_url || selected.brand_url || selected.photos_url) && (
               <div className="flex flex-wrap gap-2">
                 {selected.logo_file && (
                   <button
@@ -293,6 +310,16 @@ export default function BriefingsPanel() {
                     className="panel-btn-ghost text-sm"
                   >
                     <ExternalLink size={14} /> Link do material
+                  </a>
+                )}
+                {selected.photos_url && (
+                  <a
+                    href={selected.photos_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="panel-btn-ghost text-sm"
+                  >
+                    <ExternalLink size={14} /> Link de fotos / arquivos
                   </a>
                 )}
               </div>

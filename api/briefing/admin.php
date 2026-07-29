@@ -44,6 +44,21 @@ try {
         ]);
     }
 
+    if ($method === 'DELETE') {
+        $data = briefing_json_input();
+        if ($data === []) {
+            $data = $_POST;
+        }
+        $id = trim((string) ($data['id'] ?? $_GET['id'] ?? ''));
+        if ($id === '') {
+            briefing_json(['success' => false, 'message' => 'ID obrigatório.'], 400);
+        }
+        if (!briefings_delete($id)) {
+            briefing_json(['success' => false, 'message' => 'Briefing não encontrado.'], 404);
+        }
+        briefing_json(['success' => true]);
+    }
+
     if ($method === 'PUT' || $method === 'PATCH' || $method === 'POST') {
         $data = briefing_json_input();
         if ($data === []) {

@@ -53,6 +53,7 @@ try {
     $hasLogo = briefing_sanitize_text($_POST['has_logo'] ?? '', 20);
     $logoUrl = briefing_sanitize_text($_POST['logo_url'] ?? '', 500);
     $brandUrl = briefing_sanitize_text($_POST['brand_url'] ?? '', 500);
+    $photosUrl = briefing_sanitize_text($_POST['photos_url'] ?? '', 500);
     $colorPrimary = briefing_sanitize_hex($_POST['color_primary'] ?? '');
     $colorSecondary = briefing_sanitize_hex($_POST['color_secondary'] ?? '');
     $colorAccent = briefing_sanitize_hex($_POST['color_accent'] ?? '');
@@ -131,6 +132,7 @@ try {
         'brand_file' => $brandFile,
         'logo_url' => $logoUrl,
         'brand_url' => $brandUrl,
+        'photos_url' => $photosUrl,
         'color_primary' => $colorPrimary !== '' ? $colorPrimary : '#1052E0',
         'color_secondary' => $colorSecondary !== '' ? $colorSecondary : '#1A1D26',
         'color_accent' => $colorAccent !== '' ? $colorAccent : '#10B981',

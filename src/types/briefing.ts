@@ -30,6 +30,7 @@ export type Briefing = {
   brand_file: BriefingFileMeta | null;
   logo_url: string;
   brand_url: string;
+  photos_url: string;
   color_primary: string;
   color_secondary: string;
   color_accent: string;

@@ -44,6 +44,35 @@ function briefings_update(string $id, array $patch): ?array
     return null;
 }
 
+function briefings_delete(string $id): bool
+{
+    $list = briefings_all();
+    $next = [];
+    $deleted = false;
+    foreach ($list as $item) {
+        if (($item['id'] ?? '') !== $id) {
+            $next[] = $item;
+            continue;
+        }
+        $deleted = true;
+        foreach (['logo_file', 'brand_file'] as $key) {
+            $meta = $item[$key] ?? null;
+            if (!is_array($meta)) {
+                continue;
+            }
+            $path = briefing_resolve_upload_path($meta);
+            if ($path !== null && is_file($path)) {
+                @unlink($path);
+            }
+        }
+    }
+    if (!$deleted) {
+        return false;
+    }
+    briefings_save($next);
+    return true;
+}
+
 function briefings_count_new(): int
 {
     $n = 0;
