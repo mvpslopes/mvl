@@ -30,10 +30,12 @@ export default defineConfig({
             for (const entry of entries) {
               const srcPath = join(src, entry.name);
               const destPath = join(dest, entry.name);
-              
+              const srcNorm = src.replace(/\\/g, '/');
+
               // Pular arquivos e pastas que não devem ser copiados
               const skipItems = [
                 'credentials.json', // Arquivo sensível
+                'config.local.php', // Configurações e chaves privadas
                 '.git', // Pasta git
                 '.gitignore',
                 '.gitattributes',
@@ -42,12 +44,19 @@ export default defineConfig({
                 'Thumbs.db', // Arquivos do Windows
               ];
 
-              if (skipItems.includes(entry.name)) {
+              // Exceções: config.local.php destes módulos guarda credenciais de
+              // serviço externo (iguais em dev e produção), não do ambiente local.
+              // O .htaccess do módulo bloqueia o acesso direto via navegador.
+              const modulosComConfigPublicavel = ['api/ideias'];
+              const isConfigPublicavel =
+                entry.name === 'config.local.php' &&
+                modulosComConfigPublicavel.some((dir) => srcNorm.endsWith(dir));
+
+              if (skipItems.includes(entry.name) && !isConfigPublicavel) {
                 continue;
               }
 
               // Não publicar leads/uploads do briefing nem logos de clientes (permanecem só no servidor)
-              const srcNorm = src.replace(/\\/g, '/');
               const isProtectedDados =
                 entry.name === 'dados' &&
                 (srcNorm.endsWith('/briefing') ||
@@ -85,7 +94,7 @@ export default defineConfig({
           };
           
           copyRecursive(apiDir, distApiDir);
-          console.log('✅ Pasta api/ copiada para dist/ (exceto credentials.json, briefing/dados e clientes/dados)');
+          console.log('✅ Pasta api/ copiada para dist/ (exceto arquivos privados e pastas de dados)');
         }
 
         const htaccess = join(__dirname, 'public', '.htaccess');

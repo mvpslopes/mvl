@@ -32,6 +32,7 @@ api/clientes/dados/clientes.json
 api/clientes/dados/logos/*
 !api/clientes/dados/logos/.htaccess
 !api/clientes/dados/logos/.gitkeep
+api/ideias/config.local.php
 sesmt/node_modules
 sesmt/dist
 sesmt/api/config.local.php

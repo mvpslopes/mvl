@@ -18,6 +18,9 @@ import {
   Inbox,
   ClipboardList,
   Building2,
+  Lightbulb,
+  Hash,
+  Shuffle,
 } from 'lucide-react';
 import logoMvlBranco from '../../logo/logo_mvl-2_branco.png';
 import BriefingsPanel from './briefing/BriefingsPanel';
@@ -28,6 +31,9 @@ import FinMesPanel from './finance/FinMesPanel';
 import FinProjecaoPanel from './finance/FinProjecaoPanel';
 import FinRecorrenciasPanel from './finance/FinRecorrenciasPanel';
 import FinSaldoPanel from './finance/FinSaldoPanel';
+import IdeiasCapturaPanel from './ideias/IdeiasCapturaPanel';
+import IdeiasCombinarPanel from './ideias/IdeiasCombinarPanel';
+import IdeiasKeywordsPanel from './ideias/IdeiasKeywordsPanel';
 import ProjBacklogPanel from './projetos/ProjBacklogPanel';
 import ProjSemanaPanel from './projetos/ProjSemanaPanel';
 
@@ -42,6 +48,9 @@ type PanelSection =
   | 'proj-backlog'
   | 'briefing-lista'
   | 'site-clientes'
+  | 'ideias-captura'
+  | 'ideias-keywords'
+  | 'ideias-combinar'
   | 'users'
   | 'settings';
 
@@ -56,6 +65,9 @@ const sectionTitles: Record<PanelSection, string> = {
   'proj-backlog': 'Projetos — Backlog',
   'briefing-lista': 'Briefings',
   'site-clientes': 'Site — Clientes',
+  'ideias-captura': 'Ideias — Captura',
+  'ideias-keywords': 'Ideias — Por palavra-chave',
+  'ideias-combinar': 'Ideias — Combinar',
   users: 'Usuários',
   settings: 'Configurações',
 };
@@ -266,6 +278,12 @@ export default function Dashboard() {
     { id: 'site-clientes', icon: Building2, label: 'Clientes' },
   ];
 
+  const ideiasNav: { id: PanelSection; icon: typeof Lightbulb; label: string }[] = [
+    { id: 'ideias-captura', icon: Lightbulb, label: 'Captura' },
+    { id: 'ideias-keywords', icon: Hash, label: 'Por palavra-chave' },
+    { id: 'ideias-combinar', icon: Shuffle, label: 'Combinar' },
+  ];
+
   return (
     <div className="min-h-screen bg-[#F8F9FB] text-[#1A1D26] flex">
       {mobileNavOpen && (
@@ -374,6 +392,18 @@ export default function Dashboard() {
 
           {navExpanded && (
             <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              Ideias
+            </p>
+          )}
+          {ideiasNav.map(({ id, icon: Icon, label }) => (
+            <button key={id} type="button" onClick={() => selectSection(id)} className={navItemClass(id)}>
+              <Icon size={18} strokeWidth={1.75} />
+              {navExpanded && <span>{label}</span>}
+            </button>
+          ))}
+
+          {navExpanded && (
+            <p className="px-3.5 mt-6 mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
               Sistema
             </p>
           )}
@@ -449,6 +479,9 @@ export default function Dashboard() {
           {activeSection === 'proj-backlog' && <ProjBacklogPanel />}
           {activeSection === 'briefing-lista' && <BriefingsPanel />}
           {activeSection === 'site-clientes' && <ClientesPanel />}
+          {activeSection === 'ideias-captura' && <IdeiasCapturaPanel />}
+          {activeSection === 'ideias-keywords' && <IdeiasKeywordsPanel />}
+          {activeSection === 'ideias-combinar' && <IdeiasCombinarPanel />}
 
           {activeSection === 'users' && (
             <div className="panel-card max-w-3xl">
