@@ -1,5 +1,5 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { ChevronDown, Pencil, Plus, Star, Trash2, X } from 'lucide-react';
+import { ChevronDown, Pencil, Plus, Star, Tags, Trash2, X } from 'lucide-react';
 import { ideiasFetch } from '../../lib/ideiasApi';
 import type { Ideia, IdeiaKeyword } from '../../types/ideias';
 
@@ -43,6 +43,7 @@ export default function IdeiasCapturaPanel() {
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editTagsInput, setEditTagsInput] = useState('');
   const [tagsPickerOpen, setTagsPickerOpen] = useState(false);
+  const [generatingTags, setGeneratingTags] = useState(false);
 
   const carregar = useCallback(async () => {
     setLoading(true);
@@ -91,6 +92,47 @@ export default function IdeiasCapturaPanel() {
       addTag(tagsInput.replace(/,/g, ''));
     } else if (e.key === 'Backspace' && tagsInput === '' && tags.length) {
       setTags((prev) => prev.slice(0, -1));
+    }
+  };
+
+  const gerarTags = async () => {
+    const body = texto.trim();
+    if (!body) {
+      setMsg('Escreva a ideia antes de gerar as tags.');
+      return;
+    }
+    setGeneratingTags(true);
+    setMsg('');
+    try {
+      const data = await ideiasFetch<{ tags: string[] }>('/sugerir-tags.php', {
+        method: 'POST',
+        body: {
+          texto: body,
+          existentes: allKeywords.map((k) => k.nome),
+        },
+      });
+      const sugeridas = data.tags ?? [];
+      if (sugeridas.length === 0) {
+        setMsg('A IA não sugeriu tags. Tente reformular a frase.');
+        return;
+      }
+      setTags((prev) => {
+        const used = new Set(prev.map((t) => t.toLowerCase()));
+        const merged = [...prev];
+        for (const tag of sugeridas) {
+          const key = tag.toLowerCase();
+          if (!used.has(key)) {
+            used.add(key);
+            merged.push(tag);
+          }
+        }
+        return merged;
+      });
+      setTagsInput('');
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : 'Erro ao gerar tags');
+    } finally {
+      setGeneratingTags(false);
     }
   };
 
@@ -228,6 +270,16 @@ export default function IdeiasCapturaPanel() {
               }, 150);
             }}
           />
+          <button
+            type="button"
+            className="panel-btn-ghost text-xs shrink-0"
+            onClick={gerarTags}
+            disabled={generatingTags || !texto.trim()}
+            title="Sugerir tags a partir do texto com IA"
+          >
+            <Tags size={14} />
+            {generatingTags ? 'Gerando…' : 'Gerar tags'}
+          </button>
           {allKeywords.length > 0 && (
             <button
               type="button"

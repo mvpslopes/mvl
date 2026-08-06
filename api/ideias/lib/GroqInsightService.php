@@ -18,12 +18,6 @@ final class GroqInsightService
      */
     public function gerar(array $ideias, string $perguntaGuia = ''): array
     {
-        if ($this->apiKey === '') {
-            throw new RuntimeException('Groq não configurado no servidor.');
-        }
-        if (!function_exists('curl_init')) {
-            throw new RuntimeException('Extensão cURL não está disponível no servidor.');
-        }
         if (count($ideias) < 2) {
             throw new InvalidArgumentException('Selecione pelo menos duas ideias para combinar.');
         }
@@ -69,20 +63,97 @@ PROMPT;
             'inputs' => $inputs,
         ];
 
+        $result = $this->chatJson(
+            $system,
+            'Combine estes inputs: ' . json_encode(
+                $userPayload,
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            ),
+            0.85,
+            1800
+        );
+
+        return $this->sanitizeResult($result);
+    }
+
+    /**
+     * @param list<string> $existentes
+     * @return list<string>
+     */
+    public function sugerirTags(string $texto, array $existentes = []): array
+    {
+        $texto = trim($texto);
+        if ($texto === '') {
+            throw new InvalidArgumentException('Informe o texto da ideia para sugerir tags.');
+        }
+
+        $catalogo = [];
+        foreach (array_slice($existentes, 0, 200) as $nome) {
+            $clean = mb_substr(trim(strip_tags((string) $nome)), 0, 80);
+            if ($clean === '') {
+                continue;
+            }
+            $catalogo[mb_strtolower($clean, 'UTF-8')] = $clean;
+        }
+        $catalogo = array_values($catalogo);
+
+        $system = <<<'PROMPT'
+Você classifica observações curtas com palavras-chave úteis para agrupar ideias depois.
+Escreva em português do Brasil. Não use emojis.
+
+Regras:
+- Gere entre 3 e 6 tags.
+- Prefira reutilizar tags do catálogo existente quando fizer sentido (copie a grafia exata).
+- Só invente tags novas se nenhuma existente cobrir bem o tema.
+- Tags curtas: 1 a 3 palavras, concretas, sem hashtag (#).
+- Evite genéricas demais como "ideia", "pensamento", "observação".
+
+Retorne SOMENTE JSON válido:
+{"tags":["tag1","tag2","tag3"]}
+PROMPT;
+
+        $userPayload = [
+            'texto' => mb_substr($texto, 0, 500),
+            'catalogo_existente' => $catalogo,
+        ];
+
+        $result = $this->chatJson(
+            $system,
+            'Sugira tags para esta observação: ' . json_encode(
+                $userPayload,
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            ),
+            0.35,
+            400
+        );
+
+        return $this->sanitizeTags(is_array($result['tags'] ?? null) ? $result['tags'] : [], $catalogo);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function chatJson(
+        string $system,
+        string $user,
+        float $temperature,
+        int $maxTokens
+    ): array {
+        if ($this->apiKey === '') {
+            throw new RuntimeException('Groq não configurado no servidor.');
+        }
+        if (!function_exists('curl_init')) {
+            throw new RuntimeException('Extensão cURL não está disponível no servidor.');
+        }
+
         $body = json_encode([
             'model' => $this->model,
             'messages' => [
                 ['role' => 'system', 'content' => $system],
-                [
-                    'role' => 'user',
-                    'content' => 'Combine estes inputs: ' . json_encode(
-                        $userPayload,
-                        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-                    ),
-                ],
+                ['role' => 'user', 'content' => $user],
             ],
-            'temperature' => 0.85,
-            'max_completion_tokens' => 1800,
+            'temperature' => $temperature,
+            'max_completion_tokens' => $maxTokens,
             'response_format' => ['type' => 'json_object'],
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
@@ -134,7 +205,41 @@ PROMPT;
             throw new RuntimeException('A IA retornou um conteúdo que não pôde ser interpretado.');
         }
 
-        return $this->sanitizeResult($result);
+        return $result;
+    }
+
+    /**
+     * @param list<mixed> $rawTags
+     * @param list<string> $catalogo
+     * @return list<string>
+     */
+    private function sanitizeTags(array $rawTags, array $catalogo): array
+    {
+        $byLower = [];
+        foreach ($catalogo as $nome) {
+            $byLower[mb_strtolower($nome, 'UTF-8')] = $nome;
+        }
+
+        $tags = [];
+        foreach (array_slice($rawTags, 0, 8) as $tag) {
+            $clean = mb_substr(trim(strip_tags((string) $tag)), 0, 80);
+            $clean = ltrim($clean, "# \t");
+            if ($clean === '') {
+                continue;
+            }
+            $key = mb_strtolower($clean, 'UTF-8');
+            if (isset($byLower[$key])) {
+                $clean = $byLower[$key];
+            }
+            $tags[$key] = $clean;
+        }
+
+        $tags = array_values($tags);
+        if ($tags === []) {
+            throw new RuntimeException('A IA não gerou tags válidas.');
+        }
+
+        return $tags;
     }
 
     /**
